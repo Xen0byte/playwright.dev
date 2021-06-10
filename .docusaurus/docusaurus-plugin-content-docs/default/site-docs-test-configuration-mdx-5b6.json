@@ -1,0 +1,16 @@
+{
+  "unversionedId": "test-configuration",
+  "id": "test-configuration",
+  "isDocsHomePage": false,
+  "title": "Configuration",
+  "description": "- Configure browser, context, videos and screenshots",
+  "source": "@site/docs/test-configuration.mdx",
+  "sourceDirName": ".",
+  "slug": "/test-configuration",
+  "permalink": "/dotnet/docs/next/test-configuration",
+  "version": "current",
+  "frontMatter": {
+    "id": "test-configuration",
+    "title": "Configuration"
+  }
+}

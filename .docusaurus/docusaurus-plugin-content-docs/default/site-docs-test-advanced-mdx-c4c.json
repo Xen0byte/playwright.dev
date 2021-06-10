@@ -1,0 +1,16 @@
+{
+  "unversionedId": "test-advanced",
+  "id": "test-advanced",
+  "isDocsHomePage": false,
+  "title": "Advanced: configuration",
+  "description": "- Configuration object",
+  "source": "@site/docs/test-advanced.mdx",
+  "sourceDirName": ".",
+  "slug": "/test-advanced",
+  "permalink": "/dotnet/docs/next/test-advanced",
+  "version": "current",
+  "frontMatter": {
+    "id": "test-advanced",
+    "title": "Advanced: configuration"
+  }
+}

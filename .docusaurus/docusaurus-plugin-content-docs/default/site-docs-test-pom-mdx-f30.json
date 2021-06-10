@@ -1,0 +1,16 @@
+{
+  "unversionedId": "test-pom",
+  "id": "test-pom",
+  "isDocsHomePage": false,
+  "title": "Page Object Model",
+  "description": "Page Object Model is a common pattern that introduces abstractions over web app pages to simplify interactions with them in multiple tests. It is best explained by an example.",
+  "source": "@site/docs/test-pom.mdx",
+  "sourceDirName": ".",
+  "slug": "/test-pom",
+  "permalink": "/dotnet/docs/next/test-pom",
+  "version": "current",
+  "frontMatter": {
+    "id": "test-pom",
+    "title": "Page Object Model"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "unversionedId": "test-snapshots",
+  "id": "test-snapshots",
+  "isDocsHomePage": false,
+  "title": "Visual comparisons",
+  "description": "Playwright Test includes the ability to produce and visually compare screenshots using expect(value).toMatchSnapshot(snapshotName). On first execution, Playwright test will generate reference screenshots. Subsequent runs will compare against the reference.",
+  "source": "@site/docs/test-snapshots.mdx",
+  "sourceDirName": ".",
+  "slug": "/test-snapshots",
+  "permalink": "/dotnet/docs/next/test-snapshots",
+  "version": "current",
+  "frontMatter": {
+    "id": "test-snapshots",
+    "title": "Visual comparisons"
+  }
+}

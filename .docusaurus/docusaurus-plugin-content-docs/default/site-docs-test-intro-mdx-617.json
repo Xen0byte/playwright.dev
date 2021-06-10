@@ -1,0 +1,16 @@
+{
+  "unversionedId": "test-intro",
+  "id": "test-intro",
+  "isDocsHomePage": false,
+  "title": "Introduction",
+  "description": "Playwright Test Runner was created specifically to accommodate the needs of the end-to-end testing. It does everything you would expect from the regular test runner, and more. Playwright test allows to:",
+  "source": "@site/docs/test-intro.mdx",
+  "sourceDirName": ".",
+  "slug": "/test-intro",
+  "permalink": "/dotnet/docs/next/test-intro",
+  "version": "current",
+  "frontMatter": {
+    "id": "test-intro",
+    "title": "Introduction"
+  }
+}

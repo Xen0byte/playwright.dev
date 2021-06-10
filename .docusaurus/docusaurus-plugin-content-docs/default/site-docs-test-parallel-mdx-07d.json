@@ -1,0 +1,16 @@
+{
+  "unversionedId": "test-parallel",
+  "id": "test-parallel",
+  "isDocsHomePage": false,
+  "title": "Parallelism and sharding",
+  "description": "Playwright Test runs tests in parallel by default, using multiple worker processes.",
+  "source": "@site/docs/test-parallel.mdx",
+  "sourceDirName": ".",
+  "slug": "/test-parallel",
+  "permalink": "/dotnet/docs/next/test-parallel",
+  "version": "current",
+  "frontMatter": {
+    "id": "test-parallel",
+    "title": "Parallelism and sharding"
+  }
+}
