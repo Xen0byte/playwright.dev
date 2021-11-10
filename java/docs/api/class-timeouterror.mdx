@@ -9,6 +9,27 @@ import TabItem from '@theme/TabItem';
 
 TimeoutError is emitted whenever certain operations are terminated due to timeout, e.g. [Page.waitForSelector(selector[, options])](./api/class-page.mdx#page-wait-for-selector) or [BrowserType.launch([options])](./api/class-browsertype.mdx#browser-type-launch).
 
+```java
+package org.example;
+
+import com.microsoft.playwright.*;
+
+public class TimeoutErrorExample {
+  public static void main(String[] args) {
+    try (Playwright playwright = Playwright.create()) {
+      Browser browser = playwright.firefox().launch();
+      BrowserContext context = browser.newContext();
+      Page page = context.newPage();
+      try {
+        page.click("text=Example", new Page.ClickOptions().setTimeout(100));
+      } catch (TimeoutError e) {
+        System.out.println("Timeout!");
+      }
+    }
+  }
+}
+```
+
 
 
 [Browser]: ./api/class-browser.mdx "Browser"
@@ -20,11 +41,16 @@ TimeoutError is emitted whenever certain operations are terminated due to timeou
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -38,7 +64,7 @@ TimeoutError is emitted whenever certain operations are terminated due to timeou
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

@@ -1,6 +1,6 @@
 ---
 id: cli
-title: "Command Line Interface"
+title: "Command line tools"
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -8,13 +8,13 @@ import TabItem from '@theme/TabItem';
 Playwright comes with the command line tools.
 
 - [Usage](#usage)
+- [Install browsers](#install-browsers)
 - [Generate code](#generate-code)
 - [Open pages](#open-pages)
 - [Inspect selectors](#inspect-selectors)
 - [Take screenshot](#take-screenshot)
 - [Generate PDF](#generate-pdf)
 - [Install system dependencies](#install-system-dependencies)
-- [Known limitations](#known-limitations)
 
 ## Usage
 
@@ -29,6 +29,28 @@ npx playwright --help
     "help": "playwright --help"
   }
 }
+```
+
+## Install browsers
+
+Playwright can install supported browsers.
+
+```bash
+# Running without arguments will install default browsers
+npx playwright install
+```
+
+You can also install specific browsers by providing an argument:
+
+```bash
+# Install WebKit
+npx playwright install webkit
+```
+
+See all supported browsers:
+
+```bash
+npx playwright install --help
 ```
 
 ## Generate code
@@ -61,7 +83,7 @@ npx playwright codegen --load-storage=auth.json my.web.app
 
 ### Codegen with custom setup
 
-If you would like to use codegen in some non-standard setup (for example, use [browserContext.route(url, handler)](./api/class-browsercontext.mdx#browser-context-route)), it is possible to call [page.pause()](./api/class-page.mdx#page-pause) that will open a separate window with codegen controls.
+If you would like to use codegen in some non-standard setup (for example, use [browserContext.route(url, handler[, options])](./api/class-browsercontext.mdx#browser-context-route)), it is possible to call [page.pause()](./api/class-page.mdx#page-pause) that will open a separate window with codegen controls.
 
 ```js
 const { chromium } = require('playwright');
@@ -207,9 +229,6 @@ You can also install the dependencies for a single browser only by passing it as
 npx playwright install-deps chromium
 ```
 
-## Known limitations
-
-Opening WebKit Web Inspector will disconnect Playwright from the browser. In such cases, code generation will stop.
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
 [Android]: ./api/class-android.mdx "Android"
@@ -217,6 +236,9 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -231,8 +253,10 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -247,8 +271,22 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

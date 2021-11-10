@@ -5,7 +5,7 @@ title: "Browsers"
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Each version of Playwright needs specific versions of browser binaries to operate. Depending on the language you use, Playwright will either download these browsers at package install time for you or will require you to use [Playwright CLI](./cli.mdx) to install the browsers. Please refer to the [getting started](./intro.mdx) to see what your platform port does.
+Each version of Playwright needs specific versions of browser binaries to operate. Depending on the language you use, Playwright will either download these browsers at package install time for you, or you will need to use [Playwright CLI](./cli.mdx) to install these browsers.
 
 With every release, Playwright updates the versions of the browsers it supports, so that the latest Playwright would support the latest browsers at any moment. It means that every time you update playwright, you might need to re-run the `install` CLI command.
 
@@ -13,10 +13,16 @@ With every release, Playwright updates the versions of the browsers it supports,
 - [Firefox](#firefox)
 - [WebKit](#webkit)
 - [Google Chrome & Microsoft Edge](#google-chrome--microsoft-edge)
+- [Installing browsers](#installing-browsers)
+- [Managing browser binaries](#managing-browser-binaries)
+- [Install behind a firewall or a proxy](#install-behind-a-firewall-or-a-proxy)
+- [Download from artifact repository](#download-from-artifact-repository)
+- [Skip browser downloads](#skip-browser-downloads)
+- [Stale browser removal](#stale-browser-removal)
 
 ## Chromium
 
-For Google Chrome, Microsoft Edge and other Chromium-based browsers, by default, Playwright uses open source Chromium builds. Since Chromium project is ahead of the branded browsers, when the world is on Google Chrome 89, Playwright already supports Chromium 91 that will hit Google Chrome and Microsoft Edge if a few weeks.
+For Google Chrome, Microsoft Edge and other Chromium-based browsers, by default, Playwright uses open source Chromium builds. Since Chromium project is ahead of the branded browsers, when the world is on Google Chrome N, Playwright already supports Chromium N+1 that will be released in Google Chrome and Microsoft Edge in a few weeks.
 
 There is also a way to opt into using Google Chrome's or Microsoft Edge's branded builds for testing. For details on when to opt into stable channels, refer to the [Google Chrome & Microsoft Edge](#google-chrome--microsoft-edge) section below.
 
@@ -30,18 +36,57 @@ Playwright's WebKit version matches the recent WebKit trunk build, before it is 
 
 ## Google Chrome & Microsoft Edge
 
-While Playwright will download and use the recent Chromium build by default, it can operate against the stock Google Chrome and Microsoft Edge browsers available on the machine. In particular, current Playwright version will support Stable and Beta channels of these browsers. Here is how you can opt into using the stock browser:
+While Playwright can download and use the recent Chromium build, it can operate against the stock Google Chrome and Microsoft Edge browsers available on the machine. In particular, current Playwright version will support Stable and Beta channels of these browsers. Here is how you can opt into using the stock browser:
+
+<Tabs
+  groupId="js-flavor"
+  defaultValue="ts"
+  values={[
+    {label: 'TypeScript', value: 'ts'},
+    {label: 'JavaScript', value: 'js'},
+    {label: 'Library', value: 'library'}
+  ]
+}>
+<TabItem value="ts">
+
+```ts
+import { PlaywrightTestConfig } from '@playwright/test';
+const config: PlaywrightTestConfig = {
+  use: {
+    channel: 'chrome',
+  },
+};
+export default config;
+```
+
+</TabItem>
+<TabItem value="js">
 
 ```js
+// @ts-check
+
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
+const config = {
+  use: {
+    channel: 'chrome',
+  },
+};
+
+module.exports = config;
+```
+
+</TabItem>
+<TabItem value="library">
+
+```library
 const { chromium } = require('playwright');
 const browser = await chromium.launch({
   channel: 'chrome' // or 'msedge', 'chrome-beta', 'msedge-beta', 'msedge-dev', etc.
 });
 ```
 
-:::note
-Playwright bundles a recent Chromium build, but not Google Chrome or Microsoft Edge browsers - these should be installed manually before use.
-:::
+</TabItem>
+</Tabs>
 
 ### When to use Google Chrome & Microsoft Edge and when not to?
 
@@ -61,12 +106,326 @@ Another reason for testing using official binaries is to test functionality rela
 
 Google Chrome and Microsoft Edge respect enterprise policies, which include limitations to the capabilities, network proxy, mandatory extensions that stand in the way of testing. So if you are a part of the organization that uses such policies, it is the easiest to use bundled Chromium for your local testing, you can still opt into stable channels on the bots that are typically free of such restrictions.
 
+## Installing browsers
+
+## Managing browser binaries
+
+Playwright downloads Chromium, WebKit and Firefox browsers into the OS-specific cache folders:
+- `%USERPROFILE%\AppData\Local\ms-playwright` on Windows
+- `~/Library/Caches/ms-playwright` on MacOS
+- `~/.cache/ms-playwright` on Linux
+
+These browsers will take a few hundred megabytes of disk space when installed:
+
+```bash
+du -hs ~/Library/Caches/ms-playwright/*
+281M  chromium-XXXXXX
+187M  firefox-XXXX
+180M  webkit-XXXX
+```
+
+You can override default behavior using environment variables. When installing Playwright, ask it to download browsers into a specific location:
+
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=$HOME/pw-browsers npx playwright install
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+$env:PLAYWRIGHT_BROWSERS_PATH="$env:USERPROFILE\pw-browsers"
+npx playwright install
+```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+set PLAYWRIGHT_BROWSERS_PATH=%USERPROFILE%\pw-browsers
+npx playwright install
+```
+
+</TabItem>
+</Tabs>
+
+When running Playwright scripts, ask it to search for browsers in a shared location.
+
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=$HOME/pw-browsers npx playwright test
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+$env:PLAYWRIGHT_BROWSERS_PATH="$env:USERPROFILE\pw-browsers"
+npx playwright test
+```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+set PLAYWRIGHT_BROWSERS_PATH=%USERPROFILE%\pw-browsers
+npx playwright test
+```
+
+</TabItem>
+</Tabs>
+
+Playwright keeps track of packages that need those browsers and will garbage collect them as you update Playwright to the newer versions.
+
+:::note
+Developers can opt-in in this mode via exporting `PLAYWRIGHT_BROWSERS_PATH=$HOME/pw-browsers` in their `.bashrc`.
+:::
+
+### Managing browser binaries
+
+You can opt into the hermetic install and place binaries in the local folder:
+
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+# Places binaries to node_modules/@playwright/test
+PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+# Places binaries to node_modules\@playwright\test
+$env:PLAYWRIGHT_BROWSERS_PATH=0
+npx playwright install
+```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+# Places binaries to node_modules\@playwright\test
+set PLAYWRIGHT_BROWSERS_PATH=0
+npx playwright install
+```
+
+</TabItem>
+</Tabs>
+
+## Install behind a firewall or a proxy
+
+By default, Playwright downloads browsers from Microsoft CDN.
+
+Sometimes companies maintain an internal proxy that blocks direct access to the public resources. In this case, Playwright can be configured to download browsers via a proxy server.
+
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+# For Playwright Test
+HTTPS_PROXY=https://192.0.2.1 npx playwright install
+
+# For Playwright Library
+HTTPS_PROXY=https://192.0.2.1 npm install playwright
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+# For Playwright Test
+$env:HTTPS_PROXY="https://192.0.2.1"
+npx playwright install
+
+# For Playwright Library
+$env:HTTPS_PROXY="https://192.0.2.1"
+npm install playwright
+```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+# For Playwright Test
+set HTTPS_PROXY=https://192.0.2.1
+npx playwright install
+
+# For Playwright Library
+set HTTPS_PROXY=https://192.0.2.1
+npm install playwright
+```
+
+</TabItem>
+</Tabs>
+
+## Download from artifact repository
+
+By default, Playwright downloads browsers from Microsoft CDN.
+
+Sometimes companies maintain an internal artifact repository to host browser binaries. In this case, Playwright can be configured to download from a custom location using the `PLAYWRIGHT_DOWNLOAD_HOST` env variable.
+
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+# For Playwright Test
+PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1 npx playwright install
+
+# For Playwright Library
+PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1 npm install playwright
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+# For Playwright Test
+$env:PLAYWRIGHT_DOWNLOAD_HOST="192.0.2.1"
+npx playwright install
+
+# For Playwright Library
+$env:PLAYWRIGHT_DOWNLOAD_HOST="192.0.2.1"
+npm install playwright
+```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+# For Playwright Test
+set PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1
+npx playwright install
+
+# For Playwright Library
+set PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1
+npm install playwright
+```
+
+</TabItem>
+</Tabs>
+
+It is also possible to use a per-browser download hosts using `PLAYWRIGHT_CHROMIUM_DOWNLOAD_HOST`, `PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST` and `PLAYWRIGHT_WEBKIT_DOWNLOAD_HOST` env variables that take precedence over `PLAYWRIGHT_DOWNLOAD_HOST`.
+
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
+```bash
+# For Playwright Test
+PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST=203.0.113.3 PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1 npx playwright install
+
+# For Playwright Library
+PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST=203.0.113.3 PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1 npm install playwright
+```
+
+</TabItem>
+<TabItem value="powershell">
+
+```powershell
+# For Playwright Test
+$env:PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST="203.0.113.3"
+$env:PLAYWRIGHT_DOWNLOAD_HOST="192.0.2.1"
+npx playwright install
+
+# For Playwright Library
+$env:PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST="203.0.113.3"
+$env:PLAYWRIGHT_DOWNLOAD_HOST="192.0.2.1"
+npm install playwright
+```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+# For Playwright Test
+set PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST=203.0.113.3
+set PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1
+npx playwright install
+
+# For Playwright Library
+set PLAYWRIGHT_FIREFOX_DOWNLOAD_HOST=203.0.113.3
+set PLAYWRIGHT_DOWNLOAD_HOST=192.0.2.1
+npm install playwright
+```
+
+</TabItem>
+</Tabs>
+
+## Skip browser downloads
+
+In certain cases, it is desired to avoid browser downloads altogether because browser binaries are managed separately.
+
+This can be done by setting `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD` variable before installation.
+
+## Stale browser removal
+
+Playwright keeps track of the clients that use its browsers. When there are no more clients that require particular version of the browser, that version is deleted from the system. That way you can safely use Playwright instances of different versions and at the same time, you don't waste disk space for the browsers that are no longer in use.
+
+To opt-out from the unused browser removal, you can set the `PLAYWRIGHT_SKIP_BROWSER_GC=1` environment variable.
+
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
 [Android]: ./api/class-android.mdx "Android"
 [AndroidDevice]: ./api/class-androiddevice.mdx "AndroidDevice"
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -81,8 +440,10 @@ Google Chrome and Microsoft Edge respect enterprise policies, which include limi
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -97,8 +458,22 @@ Google Chrome and Microsoft Edge respect enterprise policies, which include limi
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

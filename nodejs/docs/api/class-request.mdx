@@ -19,9 +19,12 @@ HTTP Error responses, such as 404 or 503, are still successful responses from HT
 If request gets a 'redirect' response, the request is successfully finished with the 'requestfinished' event, and a new request is  issued to a redirected url.
 
 
+- [request.allHeaders()](./api/class-request.mdx#request-all-headers)
 - [request.failure()](./api/class-request.mdx#request-failure)
 - [request.frame()](./api/class-request.mdx#request-frame)
 - [request.headers()](./api/class-request.mdx#request-headers)
+- [request.headersArray()](./api/class-request.mdx#request-headers-array)
+- [request.headerValue(name)](./api/class-request.mdx#request-header-value)
 - [request.isNavigationRequest()](./api/class-request.mdx#request-is-navigation-request)
 - [request.method()](./api/class-request.mdx#request-method)
 - [request.postData()](./api/class-request.mdx#request-post-data)
@@ -31,8 +34,14 @@ If request gets a 'redirect' response, the request is successfully finished with
 - [request.redirectedTo()](./api/class-request.mdx#request-redirected-to)
 - [request.resourceType()](./api/class-request.mdx#request-resource-type)
 - [request.response()](./api/class-request.mdx#request-response)
+- [request.sizes()](./api/class-request.mdx#request-sizes)
 - [request.timing()](./api/class-request.mdx#request-timing)
 - [request.url()](./api/class-request.mdx#request-url)
+
+## request.allHeaders() {#request-all-headers}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-all-headers-return"/> &#60;[Promise]<[Object]<[string], [string]>>&#62;<a href="#request-all-headers-return" class="list-anchor">#</a>
+
+An object with all the request HTTP headers associated with this request. The header names are lower-cased.
 
 ## request.failure() {#request-failure}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-failure-return"/> &#60;[null]|[Object]&#62;<a href="#request-failure-return" class="list-anchor">#</a>
@@ -53,10 +62,23 @@ page.on('requestfailed', request => {
 
 Returns the [Frame] that initiated this request.
 
+## request.headerValue(name) {#request-header-value}
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-header-value-option-name"/> &#60;[string]&#62; Name of the header.<a href="#request-header-value-option-name" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-header-value-return"/> &#60;[Promise]<[null]|[string]>&#62;<a href="#request-header-value-return" class="list-anchor">#</a>
+
+Returns the value of the header matching the name. The name is case insensitive.
+
 ## request.headers() {#request-headers}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-headers-return"/> &#60;[Object]<[string], [string]>&#62;<a href="#request-headers-return" class="list-anchor">#</a>
 
-An object with HTTP headers associated with the request. All header names are lower-case.
+**DEPRECATED** Incomplete list of headers as seen by the rendering engine. Use [request.allHeaders()](./api/class-request.mdx#request-all-headers) instead.
+
+## request.headersArray() {#request-headers-array}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-headers-array-return"/> &#60;[Promise]<[Array]<[Object]>>&#62;<a href="#request-headers-array-return" class="list-anchor">#</a>
+  - `name` &#60;[string]&#62; Name of the header.
+  - `value` &#60;[string]&#62; Value of the header.
+
+An array with all the request HTTP headers associated with this request. Unlike [request.allHeaders()](./api/class-request.mdx#request-all-headers), header names are NOT lower-cased. Headers with multiple entries, such as `Set-Cookie`, appear in the array multiple times.
 
 ## request.isNavigationRequest() {#request-is-navigation-request}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-is-navigation-request-return"/> &#60;[boolean]&#62;<a href="#request-is-navigation-request-return" class="list-anchor">#</a>
@@ -79,7 +101,7 @@ Request's post body, if any.
 Request's post body in a binary form, if any.
 
 ## request.postDataJSON() {#request-post-data-json}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-post-data-json-return"/> &#60;[null]|[Object]&#62;<a href="#request-post-data-json-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-post-data-json-return"/> &#60;[null]|[Serializable]&#62;<a href="#request-post-data-json-return" class="list-anchor">#</a>
 
 Returns parsed request's body for `form-urlencoded` and JSON as a fallback if any.
 
@@ -127,6 +149,15 @@ Contains the request's resource type as it was perceived by the rendering engine
 
 Returns the matching [Response] object, or `null` if the response was not received due to error.
 
+## request.sizes() {#request-sizes}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-sizes-return"/> &#60;[Promise]<[Object]>&#62;<a href="#request-sizes-return" class="list-anchor">#</a>
+  - `requestBodySize` &#60;[number]&#62; Size of the request body (POST data payload) in bytes. Set to 0 if there was no body.
+  - `requestHeadersSize` &#60;[number]&#62; Total number of bytes from the start of the HTTP request message until (and including) the double CRLF before the body.
+  - `responseBodySize` &#60;[number]&#62; Size of the received response body (encoded) in bytes.
+  - `responseHeadersSize` &#60;[number]&#62; Total number of bytes from the start of the HTTP response message until (and including) the double CRLF before the body.
+
+Returns resource size information for given request.
+
 ## request.timing() {#request-timing}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-timing-return"/> &#60;[Object]&#62;<a href="#request-timing-return" class="list-anchor">#</a>
   - `startTime` &#60;[number]&#62; Request start time in milliseconds elapsed since January 1, 1970 00:00:00 UTC
@@ -160,6 +191,9 @@ URL of the request.
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -174,8 +208,10 @@ URL of the request.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -190,8 +226,22 @@ URL of the request.
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

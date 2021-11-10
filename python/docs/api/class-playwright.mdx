@@ -61,6 +61,7 @@ asyncio.run(main())
 - [playwright.chromium](./api/class-playwright.mdx#playwright-chromium)
 - [playwright.devices](./api/class-playwright.mdx#playwright-devices)
 - [playwright.firefox](./api/class-playwright.mdx#playwright-firefox)
+- [playwright.request](./api/class-playwright.mdx#playwright-request)
 - [playwright.selectors](./api/class-playwright.mdx#playwright-selectors)
 - [playwright.webkit](./api/class-playwright.mdx#playwright-webkit)
 
@@ -151,6 +152,11 @@ asyncio.run(main())
 
 This object can be used to launch or connect to Firefox, returning instances of [Browser].
 
+## playwright.request {#playwright-request}
+- type: &#60;[APIRequest]&#62;
+
+Exposes API that can be used for the Web API testing.
+
 ## playwright.selectors {#playwright-selectors}
 - type: &#60;[Selectors]&#62;
 
@@ -162,6 +168,9 @@ Selectors can be used to install custom selector engines. See [Working with sele
 This object can be used to launch or connect to WebKit, returning instances of [Browser].
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -173,8 +182,10 @@ This object can be used to launch or connect to WebKit, returning instances of [
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -189,7 +200,7 @@ This object can be used to launch or connect to WebKit, returning instances of [
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

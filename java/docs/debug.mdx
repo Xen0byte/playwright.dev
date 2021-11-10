@@ -68,18 +68,39 @@ Using `PWDEBUG=console` will configure the browser for debugging in Developer to
 * **Disables timeout**: Sets default timeout to 0 (= no timeout)
 * **Console helper**: Configures a `playwright` object in the browser to generate and highlight [Playwright selectors](./selectors.mdx). This can be used to verify text or composite selectors.
 
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
 ```bash
-# Linux/macOS
 PWDEBUG=console mvn test
+```
 
-# Windows with cmd.exe
-set PWDEBUG=console
-mvn test
+</TabItem>
+<TabItem value="powershell">
 
-# Windows with PowerShell
+```powershell
 $env:PWDEBUG="console"
 mvn test
 ```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+set PWDEBUG=console
+mvn test
+```
+
+</TabItem>
+</Tabs>
 
 ## Selectors in Developer Tools Console
 
@@ -114,19 +135,39 @@ Setup [`launch.json` configuration](https://code.visualstudio.com/docs/nodejs/no
 
 Playwright supports verbose logging with the `DEBUG` environment variable.
 
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
 ```bash
-# Linux/macOS
 DEBUG=pw:api mvn test
+```
 
-# Windows with cmd.exe
-set DEBUG=pw:api
-mvn test
+</TabItem>
+<TabItem value="powershell">
 
-# Windows with PowerShell
+```powershell
 $env:DEBUG="pw:api"
 mvn test
 ```
 
+</TabItem>
+<TabItem value="batch">
+
+```batch
+set DEBUG=pw:api
+mvn test
+```
+
+</TabItem>
+</Tabs>
 
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
@@ -137,11 +178,16 @@ mvn test
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -155,7 +201,7 @@ mvn test
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

@@ -61,7 +61,7 @@ PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm i -D playwright
   - `cwd`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-cwd"/> &#60;[string]&#62; Current working directory to launch application from.<a href="#electron-launch-option-cwd" class="list-anchor">#</a>
   - `env`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-env"/> &#60;[Object]<[string], [string]>&#62; Specifies environment variables that will be visible to Electron. Defaults to `process.env`.<a href="#electron-launch-option-env" class="list-anchor">#</a>
   - `executablePath`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-executable-path"/> &#60;[string]&#62; Launches given Electron application. If not specified, launches the default Electron executable installed in this package, located at `node_modules/.bin/electron`.<a href="#electron-launch-option-executable-path" class="list-anchor">#</a>
-  - `extraHTTPHeaders`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-extra-http-headers"/> &#60;[Object]<[string], [string]>&#62; An object containing additional HTTP headers to be sent with every request. All header values must be strings.<a href="#electron-launch-option-extra-http-headers" class="list-anchor">#</a>
+  - `extraHTTPHeaders`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-extra-http-headers"/> &#60;[Object]<[string], [string]>&#62; An object containing additional HTTP headers to be sent with every request.<a href="#electron-launch-option-extra-http-headers" class="list-anchor">#</a>
   - `geolocation`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-geolocation"/> &#60;[Object]&#62;<a href="#electron-launch-option-geolocation" class="list-anchor">#</a>
     - `latitude` &#60;[number]&#62; Latitude between -90 and 90.
     - `longitude` &#60;[number]&#62; Longitude between -180 and 180.
@@ -69,7 +69,7 @@ PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm i -D playwright
   - `httpCredentials`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-http-credentials"/> &#60;[Object]&#62; Credentials for [HTTP authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).<a href="#electron-launch-option-http-credentials" class="list-anchor">#</a>
     - `username` &#60;[string]&#62;
     - `password` &#60;[string]&#62;
-  - `ignoreHTTPSErrors`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-ignore-https-errors"/> &#60;[boolean]&#62; Whether to ignore HTTPS errors during navigation. Defaults to `false`.<a href="#electron-launch-option-ignore-https-errors" class="list-anchor">#</a>
+  - `ignoreHTTPSErrors`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-ignore-https-errors"/> &#60;[boolean]&#62; Whether to ignore HTTPS errors when sending network requests. Defaults to `false`.<a href="#electron-launch-option-ignore-https-errors" class="list-anchor">#</a>
   - `locale`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-locale"/> &#60;[string]&#62; Specify user locale, for example `en-GB`, `de-DE`, etc. Locale will affect `navigator.language` value, `Accept-Language` request header value as well as number and date formatting rules.<a href="#electron-launch-option-locale" class="list-anchor">#</a>
   - `offline`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-offline"/> &#60;[boolean]&#62; Whether to emulate network being offline. Defaults to `false`.<a href="#electron-launch-option-offline" class="list-anchor">#</a>
   - `recordHar`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-record-har"/> &#60;[Object]&#62; Enables [HAR](http://www.softwareishard.com/blog/har-12-spec) recording for all pages into `recordHar.path` file. If not specified, the HAR is not recorded. Make sure to await [browserContext.close()](./api/class-browsercontext.mdx#browser-context-close) for the HAR to be saved.<a href="#electron-launch-option-record-har" class="list-anchor">#</a>
@@ -80,6 +80,7 @@ PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm i -D playwright
     - `size` &#60;[Object]&#62; Optional dimensions of the recorded videos. If not specified the size will be equal to `viewport` scaled down to fit into 800x800. If `viewport` is not configured explicitly the video size defaults to 800x450. Actual picture of each page will be scaled down if necessary to fit the specified size.
       - `width` &#60;[number]&#62; Video frame width.
       - `height` &#60;[number]&#62; Video frame height.
+  - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds to wait for the application to start. Defaults to `30000` (30 seconds). Pass `0` to disable timeout.<a href="#electron-launch-option-timeout" class="list-anchor">#</a>
   - `timezoneId`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-option-timezone-id"/> &#60;[string]&#62; Changes the timezone of the context. See [ICU's metaZones.txt](https://cs.chromium.org/chromium/src/third_party/icu/source/data/misc/metaZones.txt?rcl=faee8bc70570192d82d2978a71e2a615788597d1) for a list of supported timezone IDs.<a href="#electron-launch-option-timezone-id" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="electron-launch-return"/> &#60;[Promise]<[ElectronApplication]>&#62;<a href="#electron-launch-return" class="list-anchor">#</a>
 
@@ -91,6 +92,9 @@ Launches electron application specified with the `executablePath`.
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -105,8 +109,10 @@ Launches electron application specified with the `executablePath`.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -121,8 +127,22 @@ Launches electron application specified with the `executablePath`.
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

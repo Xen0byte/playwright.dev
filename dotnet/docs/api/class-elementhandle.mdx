@@ -7,29 +7,38 @@ import TabItem from '@theme/TabItem';
 
 * extends: [JSHandle]
 
-ElementHandle represents an in-page DOM element. ElementHandles can be created with the [Page.QuerySelectorAsync(selector)](./api/class-page.mdx#page-query-selector) method.
+ElementHandle represents an in-page DOM element. ElementHandles can be created with the [Page.QuerySelectorAsync(selector, options)](./api/class-page.mdx#page-query-selector) method.
 
 ```csharp
-using Microsoft.Playwright;
-using System.Threading.Tasks;
-
-class HandleExamples
-{
-    public static async Task Run()
-    {
-        using var playwright = await Playwright.CreateAsync();
-        var browser = await playwright.Chromium.LaunchAsync();
-        var page = await browser.NewPageAsync();
-        await page.GotoAsync("https://www.bing.com");
-        var handle = await page.QuerySelectorAsync("a");
-        await handle.ClickAsync();
-    }
-}
+var handle = await page.QuerySelectorAsync("a");
+await handle.ClickAsync();
 ```
 
 ElementHandle prevents DOM element from garbage collection unless the handle is disposed with [JsHandle.DisposeAsync()](./api/class-jshandle.mdx#js-handle-dispose). ElementHandles are auto-disposed when their origin frame gets navigated.
 
-ElementHandle instances can be used as an argument in [Page.EvalOnSelectorAsync(selector, expression, arg)](./api/class-page.mdx#page-eval-on-selector) and [Page.EvaluateAsync(expression, arg)](./api/class-page.mdx#page-evaluate) methods.
+ElementHandle instances can be used as an argument in [Page.EvalOnSelectorAsync(selector, expression, arg, options)](./api/class-page.mdx#page-eval-on-selector) and [Page.EvaluateAsync(expression, arg)](./api/class-page.mdx#page-evaluate) methods.
+
+:::note
+In most cases, you would want to use the [Locator] object instead. You should only use [ElementHandle] if you want to retain a handle to a particular DOM Node that you intend to pass into [Page.EvaluateAsync(expression, arg)](./api/class-page.mdx#page-evaluate) as an argument.
+:::
+
+The difference between the [Locator] and ElementHandle is that the ElementHandle points to a particular element, while [Locator] captures the logic of how to retrieve an element.
+
+In the example below, handle points to a particular DOM element on page. If that element changes text or is used by React to render an entirely different component, handle is still pointing to that very DOM element. This can lead to unexpected behaviors.
+
+```csharp
+var handle = await page.QuerySelectorAsync("text=Submit");
+await handle.HoverAsync();
+await handle.ClickAsync();
+```
+
+With the locator, every time the `element` is used, up-to-date DOM element is located in the page using the selector. So in the snippet below, underlying DOM element is going to be located twice.
+
+```csharp
+var locator = page.Locator("text=Submit");
+await locator.HoverAsync();
+await locator.ClickAsync();
+```
 
 
 - [ElementHandle.BoundingBoxAsync()](./api/class-elementhandle.mdx#element-handle-bounding-box)
@@ -46,6 +55,7 @@ ElementHandle instances can be used as an argument in [Page.EvalOnSelectorAsync(
 - [ElementHandle.HoverAsync(options)](./api/class-elementhandle.mdx#element-handle-hover)
 - [ElementHandle.InnerHTMLAsync()](./api/class-elementhandle.mdx#element-handle-inner-html)
 - [ElementHandle.InnerTextAsync()](./api/class-elementhandle.mdx#element-handle-inner-text)
+- [ElementHandle.InputValueAsync(options)](./api/class-elementhandle.mdx#element-handle-input-value)
 - [ElementHandle.IsCheckedAsync()](./api/class-elementhandle.mdx#element-handle-is-checked)
 - [ElementHandle.IsDisabledAsync()](./api/class-elementhandle.mdx#element-handle-is-disabled)
 - [ElementHandle.IsEditableAsync()](./api/class-elementhandle.mdx#element-handle-is-editable)
@@ -60,6 +70,7 @@ ElementHandle instances can be used as an argument in [Page.EvalOnSelectorAsync(
 - [ElementHandle.ScrollIntoViewIfNeededAsync(options)](./api/class-elementhandle.mdx#element-handle-scroll-into-view-if-needed)
 - [ElementHandle.SelectOptionAsync(values, options)](./api/class-elementhandle.mdx#element-handle-select-option)
 - [ElementHandle.SelectTextAsync(options)](./api/class-elementhandle.mdx#element-handle-select-text)
+- [ElementHandle.SetCheckedAsync(checked, options)](./api/class-elementhandle.mdx#element-handle-set-checked)
 - [ElementHandle.SetInputFilesAsync(files, options)](./api/class-elementhandle.mdx#element-handle-set-input-files)
 - [ElementHandle.TapAsync(options)](./api/class-elementhandle.mdx#element-handle-tap)
 - [ElementHandle.TextContentAsync()](./api/class-elementhandle.mdx#element-handle-text-content)
@@ -97,13 +108,13 @@ await page.Mouse.ClickAsync(box.X + box.Width / 2, box.Y + box.Height / 2);
 
 ## ElementHandle.CheckAsync(options) {#element-handle-check}
 - `options` &#60;`ElementHandleCheckOptions?`&#62;
-  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-force"/> &#60;[boolean]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-check-option-force" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-check-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-check-option-force" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-check-option-no-wait-after" class="list-anchor">#</a>
   - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-check-option-position" class="list-anchor">#</a>
     - `X` &#60;[double]&#62;
     - `Y` &#60;[double]&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-check-option-timeout" class="list-anchor">#</a>
-  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-trial"/> &#60;[boolean]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-check-option-trial" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-check-option-trial" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-check-return"/> &#60;[void]&#62;<a href="#element-handle-check-return" class="list-anchor">#</a>
 
 This method checks the element by performing the following steps:
@@ -120,17 +131,17 @@ When all steps combined have not finished during the specified `timeout`, this m
 
 ## ElementHandle.ClickAsync(options) {#element-handle-click}
 - `options` &#60;`ElementHandleClickOptions?`&#62;
-  - `Button`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-button"/> &#60;"left"|"right"|"middle"&#62; Defaults to `left`.<a href="#element-handle-click-option-button" class="list-anchor">#</a>
+  - `Button`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-button"/> &#60;`enum MouseButton { Left, Right, Middle }?`&#62; Defaults to `left`.<a href="#element-handle-click-option-button" class="list-anchor">#</a>
   - `ClickCount`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-click-count"/> &#60;[int]?&#62; defaults to 1. See [UIEvent.detail].<a href="#element-handle-click-option-click-count" class="list-anchor">#</a>
   - `Delay`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-delay"/> &#60;[double]?&#62; Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.<a href="#element-handle-click-option-delay" class="list-anchor">#</a>
-  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-force"/> &#60;[boolean]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-click-option-force" class="list-anchor">#</a>
-  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-modifiers"/> &#60;[IEnumerable]?<"Alt"|"Control"|"Meta"|"Shift">&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-click-option-modifiers" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-click-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-click-option-force" class="list-anchor">#</a>
+  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-modifiers"/> &#60;[IEnumerable]?<`enum KeyboardModifier { Alt, Control, Meta, Shift }`>&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-click-option-modifiers" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-click-option-no-wait-after" class="list-anchor">#</a>
   - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-click-option-position" class="list-anchor">#</a>
     - `X` &#60;[double]&#62;
     - `Y` &#60;[double]&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-click-option-timeout" class="list-anchor">#</a>
-  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-trial"/> &#60;[boolean]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-click-option-trial" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-click-option-trial" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-click-return"/> &#60;[void]&#62;<a href="#element-handle-click-return" class="list-anchor">#</a>
 
 This method clicks the element by performing the following steps:
@@ -150,16 +161,16 @@ Returns the content frame for element handles referencing iframe nodes, or `null
 
 ## ElementHandle.DblClickAsync(options) {#element-handle-dblclick}
 - `options` &#60;`ElementHandleDblClickOptions?`&#62;
-  - `Button`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-button"/> &#60;"left"|"right"|"middle"&#62; Defaults to `left`.<a href="#element-handle-dblclick-option-button" class="list-anchor">#</a>
+  - `Button`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-button"/> &#60;`enum MouseButton { Left, Right, Middle }?`&#62; Defaults to `left`.<a href="#element-handle-dblclick-option-button" class="list-anchor">#</a>
   - `Delay`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-delay"/> &#60;[double]?&#62; Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.<a href="#element-handle-dblclick-option-delay" class="list-anchor">#</a>
-  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-force"/> &#60;[boolean]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-dblclick-option-force" class="list-anchor">#</a>
-  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-modifiers"/> &#60;[IEnumerable]?<"Alt"|"Control"|"Meta"|"Shift">&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-dblclick-option-modifiers" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-dblclick-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-dblclick-option-force" class="list-anchor">#</a>
+  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-modifiers"/> &#60;[IEnumerable]?<`enum KeyboardModifier { Alt, Control, Meta, Shift }`>&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-dblclick-option-modifiers" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-dblclick-option-no-wait-after" class="list-anchor">#</a>
   - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-dblclick-option-position" class="list-anchor">#</a>
     - `X` &#60;[double]&#62;
     - `Y` &#60;[double]&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-dblclick-option-timeout" class="list-anchor">#</a>
-  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-trial"/> &#60;[boolean]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-dblclick-option-trial" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-dblclick-option-trial" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dblclick-return"/> &#60;[void]&#62;<a href="#element-handle-dblclick-return" class="list-anchor">#</a>
 
 This method double clicks the element by performing the following steps:
@@ -177,8 +188,8 @@ When all steps combined have not finished during the specified `timeout`, this m
 :::
 
 ## ElementHandle.DispatchEventAsync(type, eventInit) {#element-handle-dispatch-event}
-- `type`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-param-type"/> &#60;[string]&#62; DOM event type: `"click"`, `"dragstart"`, etc.<a href="#element-handle-dispatch-event-param-type" class="list-anchor">#</a>
-- `eventInit`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-param-event-init"/> &#60;[EvaluationArgument]?&#62; Optional event-specific initialization properties.<a href="#element-handle-dispatch-event-param-event-init" class="list-anchor">#</a>
+- `type`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-option-type"/> &#60;[string]&#62; DOM event type: `"click"`, `"dragstart"`, etc.<a href="#element-handle-dispatch-event-option-type" class="list-anchor">#</a>
+- `eventInit`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-option-event-init"/> &#60;[EvaluationArgument]?&#62; Optional event-specific initialization properties.<a href="#element-handle-dispatch-event-option-event-init" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-return"/> &#60;[void]&#62;<a href="#element-handle-dispatch-event-return" class="list-anchor">#</a>
 
 The snippet below dispatches the `click` event on the element. Regardless of the visibility state of the element, `click` is dispatched. This is equivalent to calling [element.click()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click).
@@ -201,17 +212,17 @@ Since `eventInit` is event-specific, please refer to the events documentation fo
 You can also specify `JSHandle` as the property value if you want live objects to be passed into the event:
 
 ```csharp
-var handle = await page.EvaluateHandleAsync("() => new DataTransfer()");
-await handle.AsElement().DispatchEventAsync("dragstart", new Dictionary<string, object>
+var dataTransfer = await page.EvaluateHandleAsync("() => new DataTransfer()");
+await elementHandle.DispatchEventAsync("dragstart", new Dictionary<string, object>
 {
     { "dataTransfer", dataTransfer }
 });
 ```
 
 ## ElementHandle.EvalOnSelectorAsync(selector, expression, arg) {#element-handle-eval-on-selector}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-param-selector" class="list-anchor">#</a>
-- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-param-expression"/> &#60;[string]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#element-handle-eval-on-selector-param-expression" class="list-anchor">#</a>
-- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-param-arg"/> &#60;[EvaluationArgument]?&#62; Optional argument to pass to `expression`.<a href="#element-handle-eval-on-selector-param-arg" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-option-selector" class="list-anchor">#</a>
+- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-option-expression"/> &#60;[string]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#element-handle-eval-on-selector-option-expression" class="list-anchor">#</a>
+- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-option-arg"/> &#60;[EvaluationArgument]?&#62; Optional argument to pass to `expression`.<a href="#element-handle-eval-on-selector-option-arg" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-return"/> &#60;[object]&#62;<a href="#element-handle-eval-on-selector-return" class="list-anchor">#</a>
 
 Returns the return value of `expression`.
@@ -229,9 +240,9 @@ Assert.Equals("10", await tweetHandle.EvalOnSelectorAsync(".retweets", "node => 
 ```
 
 ## ElementHandle.EvalOnSelectorAllAsync(selector, expression, arg) {#element-handle-eval-on-selector-all}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-all-param-selector" class="list-anchor">#</a>
-- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-param-expression"/> &#60;[string]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#element-handle-eval-on-selector-all-param-expression" class="list-anchor">#</a>
-- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-param-arg"/> &#60;[EvaluationArgument]?&#62; Optional argument to pass to `expression`.<a href="#element-handle-eval-on-selector-all-param-arg" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-all-option-selector" class="list-anchor">#</a>
+- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-option-expression"/> &#60;[string]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#element-handle-eval-on-selector-all-option-expression" class="list-anchor">#</a>
+- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-option-arg"/> &#60;[EvaluationArgument]?&#62; Optional argument to pass to `expression`.<a href="#element-handle-eval-on-selector-all-option-arg" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-return"/> &#60;[object]&#62;<a href="#element-handle-eval-on-selector-all-return" class="list-anchor">#</a>
 
 Returns the return value of `expression`.
@@ -255,9 +266,10 @@ Assert.Equals(new [] { "Hello!", "Hi!" }, await feedHandle.EvalOnSelectorAllAsyn
 ```
 
 ## ElementHandle.FillAsync(value, options) {#element-handle-fill}
-- `value`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-param-value"/> &#60;[string]&#62; Value to set for the `<input>`, `<textarea>` or `[contenteditable]` element.<a href="#element-handle-fill-param-value" class="list-anchor">#</a>
+- `value`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-value"/> &#60;[string]&#62; Value to set for the `<input>`, `<textarea>` or `[contenteditable]` element.<a href="#element-handle-fill-option-value" class="list-anchor">#</a>
 - `options` &#60;`ElementHandleFillOptions?`&#62;
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-fill-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-fill-option-force" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-fill-option-no-wait-after" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-fill-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-return"/> &#60;[void]&#62;<a href="#element-handle-fill-return" class="list-anchor">#</a>
 
@@ -273,20 +285,20 @@ To send fine-grained keyboard events, use [ElementHandle.TypeAsync(text, options
 Calls [focus](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus) on the element.
 
 ## ElementHandle.GetAttributeAsync(name) {#element-handle-get-attribute}
-- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-get-attribute-param-name"/> &#60;[string]&#62; Attribute name to get the value for.<a href="#element-handle-get-attribute-param-name" class="list-anchor">#</a>
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-get-attribute-option-name"/> &#60;[string]&#62; Attribute name to get the value for.<a href="#element-handle-get-attribute-option-name" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-get-attribute-return"/> &#60;[string]?&#62;<a href="#element-handle-get-attribute-return" class="list-anchor">#</a>
 
 Returns element attribute value.
 
 ## ElementHandle.HoverAsync(options) {#element-handle-hover}
 - `options` &#60;`ElementHandleHoverOptions?`&#62;
-  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-force"/> &#60;[boolean]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-hover-option-force" class="list-anchor">#</a>
-  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-modifiers"/> &#60;[IEnumerable]?<"Alt"|"Control"|"Meta"|"Shift">&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-hover-option-modifiers" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-hover-option-force" class="list-anchor">#</a>
+  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-modifiers"/> &#60;[IEnumerable]?<`enum KeyboardModifier { Alt, Control, Meta, Shift }`>&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-hover-option-modifiers" class="list-anchor">#</a>
   - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-hover-option-position" class="list-anchor">#</a>
     - `X` &#60;[double]&#62;
     - `Y` &#60;[double]&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-hover-option-timeout" class="list-anchor">#</a>
-  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-trial"/> &#60;[boolean]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-hover-option-trial" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-hover-option-trial" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-hover-return"/> &#60;[void]&#62;<a href="#element-handle-hover-return" class="list-anchor">#</a>
 
 This method hovers over the element by performing the following steps:
@@ -309,33 +321,40 @@ Returns the `element.innerHTML`.
 
 Returns the `element.innerText`.
 
+## ElementHandle.InputValueAsync(options) {#element-handle-input-value}
+- `options` &#60;`ElementHandleInputValueOptions?`&#62;
+  - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-input-value-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-input-value-option-timeout" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-input-value-return"/> &#60;[string]&#62;<a href="#element-handle-input-value-return" class="list-anchor">#</a>
+
+Returns `input.value` for `<input>` or `<textarea>` or `<select>` element. Throws for non-input elements.
+
 ## ElementHandle.IsCheckedAsync() {#element-handle-is-checked}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-checked-return"/> &#60;[boolean]&#62;<a href="#element-handle-is-checked-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-checked-return"/> &#60;[bool]&#62;<a href="#element-handle-is-checked-return" class="list-anchor">#</a>
 
 Returns whether the element is checked. Throws if the element is not a checkbox or radio input.
 
 ## ElementHandle.IsDisabledAsync() {#element-handle-is-disabled}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-disabled-return"/> &#60;[boolean]&#62;<a href="#element-handle-is-disabled-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-disabled-return"/> &#60;[bool]&#62;<a href="#element-handle-is-disabled-return" class="list-anchor">#</a>
 
 Returns whether the element is disabled, the opposite of [enabled](./actionability.mdx#enabled).
 
 ## ElementHandle.IsEditableAsync() {#element-handle-is-editable}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-editable-return"/> &#60;[boolean]&#62;<a href="#element-handle-is-editable-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-editable-return"/> &#60;[bool]&#62;<a href="#element-handle-is-editable-return" class="list-anchor">#</a>
 
 Returns whether the element is [editable](./actionability.mdx#editable).
 
 ## ElementHandle.IsEnabledAsync() {#element-handle-is-enabled}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-enabled-return"/> &#60;[boolean]&#62;<a href="#element-handle-is-enabled-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-enabled-return"/> &#60;[bool]&#62;<a href="#element-handle-is-enabled-return" class="list-anchor">#</a>
 
 Returns whether the element is [enabled](./actionability.mdx#enabled).
 
 ## ElementHandle.IsHiddenAsync() {#element-handle-is-hidden}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-hidden-return"/> &#60;[boolean]&#62;<a href="#element-handle-is-hidden-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-hidden-return"/> &#60;[bool]&#62;<a href="#element-handle-is-hidden-return" class="list-anchor">#</a>
 
 Returns whether the element is hidden, the opposite of [visible](./actionability.mdx#visible).
 
 ## ElementHandle.IsVisibleAsync() {#element-handle-is-visible}
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-visible-return"/> &#60;[boolean]&#62;<a href="#element-handle-is-visible-return" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-visible-return"/> &#60;[bool]&#62;<a href="#element-handle-is-visible-return" class="list-anchor">#</a>
 
 Returns whether the element is [visible](./actionability.mdx#visible).
 
@@ -345,10 +364,10 @@ Returns whether the element is [visible](./actionability.mdx#visible).
 Returns the frame containing the given element.
 
 ## ElementHandle.PressAsync(key, options) {#element-handle-press}
-- `key`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-param-key"/> &#60;[string]&#62; Name of the key to press or a character to generate, such as `ArrowLeft` or `a`.<a href="#element-handle-press-param-key" class="list-anchor">#</a>
+- `key`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-key"/> &#60;[string]&#62; Name of the key to press or a character to generate, such as `ArrowLeft` or `a`.<a href="#element-handle-press-option-key" class="list-anchor">#</a>
 - `options` &#60;`ElementHandlePressOptions?`&#62;
   - `Delay`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-delay"/> &#60;[double]?&#62; Time to wait between `keydown` and `keyup` in milliseconds. Defaults to 0.<a href="#element-handle-press-option-delay" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-press-option-no-wait-after" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-press-option-no-wait-after" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-press-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-return"/> &#60;[void]&#62;<a href="#element-handle-press-return" class="list-anchor">#</a>
 
@@ -367,25 +386,25 @@ If `key` is a single character, it is case-sensitive, so the values `a` and `A` 
 Shortcuts such as `key: "Control+o"` or `key: "Control+Shift+T"` are supported as well. When specified with the modifier, modifier is pressed and being held while the subsequent key is being pressed.
 
 ## ElementHandle.QuerySelectorAsync(selector) {#element-handle-query-selector}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-param-selector" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-option-selector" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-return"/> &#60;[ElementHandle]?&#62;<a href="#element-handle-query-selector-return" class="list-anchor">#</a>
 
 The method finds an element matching the specified selector in the `ElementHandle`'s subtree. See [Working with selectors](./selectors.mdx) for more details. If no elements match the selector, returns `null`.
 
 ## ElementHandle.QuerySelectorAllAsync(selector) {#element-handle-query-selector-all}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-all-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-all-param-selector" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-all-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-all-option-selector" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-all-return"/> &#60;[IEnumerable]<[ElementHandle]>&#62;<a href="#element-handle-query-selector-all-return" class="list-anchor">#</a>
 
 The method finds all elements matching the specified selector in the `ElementHandle`s subtree. See [Working with selectors](./selectors.mdx) for more details. If no elements match the selector, returns empty array.
 
 ## ElementHandle.ScreenshotAsync(options) {#element-handle-screenshot}
 - `options` &#60;`ElementHandleScreenshotOptions?`&#62;
-  - `OmitBackground`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-omit-background"/> &#60;[boolean]?&#62; Hides default white background and allows capturing screenshots with transparency. Not applicable to `jpeg` images. Defaults to `false`.<a href="#element-handle-screenshot-option-omit-background" class="list-anchor">#</a>
+  - `OmitBackground`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-omit-background"/> &#60;[bool]?&#62; Hides default white background and allows capturing screenshots with transparency. Not applicable to `jpeg` images. Defaults to `false`.<a href="#element-handle-screenshot-option-omit-background" class="list-anchor">#</a>
   - `Path`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-path"/> &#60;[string]?&#62; The file path to save the image to. The screenshot type will be inferred from file extension. If `path` is a relative path, then it is resolved relative to the current working directory. If no path is provided, the image won't be saved to the disk.<a href="#element-handle-screenshot-option-path" class="list-anchor">#</a>
   - `Quality`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-quality"/> &#60;[int]?&#62; The quality of the image, between 0-100. Not applicable to `png` images.<a href="#element-handle-screenshot-option-quality" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-screenshot-option-timeout" class="list-anchor">#</a>
-  - `Type`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-type"/> &#60;"png"|"jpeg"&#62; Specify screenshot type, defaults to `png`.<a href="#element-handle-screenshot-option-type" class="list-anchor">#</a>
-- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-return"/> &#60;[byte&#91;&#93;]&#62;<a href="#element-handle-screenshot-return" class="list-anchor">#</a>
+  - `Type`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-option-type"/> &#60;`enum ScreenshotType { Png, Jpeg }?`&#62; Specify screenshot type, defaults to `png`.<a href="#element-handle-screenshot-option-type" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-screenshot-return"/> &#60;[byte]&#91;&#93;&#62;<a href="#element-handle-screenshot-return" class="list-anchor">#</a>
 
 Returns the buffer with the captured screenshot.
 
@@ -401,12 +420,13 @@ This method waits for [actionability](./actionability.mdx) checks, then tries to
 Throws when `elementHandle` does not point to an element [connected](https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected) to a Document or a ShadowRoot.
 
 ## ElementHandle.SelectOptionAsync(values, options) {#element-handle-select-option}
-- `values`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-param-values"/> &#60;[string]?|[ElementHandle]?|[IEnumerable]?<[string]>|`SelectOption`|[IEnumerable]?<[ElementHandle]>|[IEnumerable]?<`SelectOption`>&#62; Options to select. If the `<select>` has the `multiple` attribute, all matching options are selected, otherwise only the first option matching one of the passed options is selected. String values are equivalent to `{value:'string'}`. Option is considered matching if all specified properties match.<a href="#element-handle-select-option-param-values" class="list-anchor">#</a>
+- `values`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-values"/> &#60;[string]?|[ElementHandle]?|[IEnumerable]?<[string]>|`SelectOption`|[IEnumerable]?<[ElementHandle]>|[IEnumerable]?<`SelectOption`>&#62; Options to select. If the `<select>` has the `multiple` attribute, all matching options are selected, otherwise only the first option matching one of the passed options is selected. String values are equivalent to `{value:'string'}`. Option is considered matching if all specified properties match.<a href="#element-handle-select-option-option-values" class="list-anchor">#</a>
   - `Value` &#60;[string]?&#62; Matches by `option.value`. Optional.
   - `Label` &#60;[string]?&#62; Matches by `option.label`. Optional.
   - `Index` &#60;[int]?&#62; Matches by the index. Optional.
 - `options` &#60;`ElementHandleSelectOptionOptions?`&#62;
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-select-option-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-select-option-option-force" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-select-option-option-no-wait-after" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-select-option-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-return"/> &#60;[IEnumerable]<[string]>&#62;<a href="#element-handle-select-option-return" class="list-anchor">#</a>
 
@@ -434,18 +454,42 @@ await handle.SelectOptionAsync(new[] {
 
 ## ElementHandle.SelectTextAsync(options) {#element-handle-select-text}
 - `options` &#60;`ElementHandleSelectTextOptions?`&#62;
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-text-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-select-text-option-force" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-text-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-select-text-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-text-return"/> &#60;[void]&#62;<a href="#element-handle-select-text-return" class="list-anchor">#</a>
 
 This method waits for [actionability](./actionability.mdx) checks, then focuses the element and selects all its text content.
 
+## ElementHandle.SetCheckedAsync(checked, options) {#element-handle-set-checked}
+- `checkedState`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-checked"/> &#60;[bool]&#62; Whether to check or uncheck the checkbox.<a href="#element-handle-set-checked-option-checked" class="list-anchor">#</a>
+- `options` &#60;`ElementHandleSetCheckedOptions?`&#62;
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-set-checked-option-force" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-set-checked-option-no-wait-after" class="list-anchor">#</a>
+  - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-set-checked-option-position" class="list-anchor">#</a>
+    - `X` &#60;[double]&#62;
+    - `Y` &#60;[double]&#62;
+  - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-set-checked-option-timeout" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-set-checked-option-trial" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-return"/> &#60;[void]&#62;<a href="#element-handle-set-checked-return" class="list-anchor">#</a>
+
+This method checks or unchecks an element by performing the following steps:
+1. Ensure that element is a checkbox or a radio input. If not, this method throws.
+1. If the element already has the right checked state, this method returns immediately.
+1. Wait for [actionability](./actionability.mdx) checks on the matched element, unless `force` option is set. If the element is detached during the checks, the whole action is retried.
+1. Scroll the element into view if needed.
+1. Use [Page.Mouse](./api/class-page.mdx#page-mouse) to click in the center of the element.
+1. Wait for initiated navigations to either succeed or fail, unless `noWaitAfter` option is set.
+1. Ensure that the element is now checked or unchecked. If not, this method throws.
+
+When all steps combined have not finished during the specified `timeout`, this method throws a [TimeoutError]. Passing zero timeout disables this.
+
 ## ElementHandle.SetInputFilesAsync(files, options) {#element-handle-set-input-files}
-- `files`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-param-files"/> &#60;[string]|[IEnumerable]<[string]>|`FilePayload`|[IEnumerable]<`FilePayload`>&#62;<a href="#element-handle-set-input-files-param-files" class="list-anchor">#</a>
+- `files`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-option-files"/> &#60;[string]|[IEnumerable]<[string]>|`FilePayload`|[IEnumerable]<`FilePayload`>&#62;<a href="#element-handle-set-input-files-option-files" class="list-anchor">#</a>
   - `Name` &#60;[string]&#62; File name
   - `MimeType` &#60;[string]&#62; File type
-  - `Buffer` &#60;[byte&#91;&#93;]&#62; File content
+  - `Buffer` &#60;[byte]&#91;&#93;&#62; File content
 - `options` &#60;`ElementHandleSetInputFilesOptions?`&#62;
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-set-input-files-option-no-wait-after" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-set-input-files-option-no-wait-after" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-set-input-files-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-return"/> &#60;[void]&#62;<a href="#element-handle-set-input-files-return" class="list-anchor">#</a>
 
@@ -455,14 +499,14 @@ Sets the value of the file input to these file paths or files. If some of the `f
 
 ## ElementHandle.TapAsync(options) {#element-handle-tap}
 - `options` &#60;`ElementHandleTapOptions?`&#62;
-  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-force"/> &#60;[boolean]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-tap-option-force" class="list-anchor">#</a>
-  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-modifiers"/> &#60;[IEnumerable]?<"Alt"|"Control"|"Meta"|"Shift">&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-tap-option-modifiers" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-tap-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-tap-option-force" class="list-anchor">#</a>
+  - `Modifiers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-modifiers"/> &#60;[IEnumerable]?<`enum KeyboardModifier { Alt, Control, Meta, Shift }`>&#62; Modifier keys to press. Ensures that only these modifiers are pressed during the operation, and then restores current modifiers back. If not specified, currently pressed modifiers are used.<a href="#element-handle-tap-option-modifiers" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-tap-option-no-wait-after" class="list-anchor">#</a>
   - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-tap-option-position" class="list-anchor">#</a>
     - `X` &#60;[double]&#62;
     - `Y` &#60;[double]&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-tap-option-timeout" class="list-anchor">#</a>
-  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-trial"/> &#60;[boolean]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-tap-option-trial" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-tap-option-trial" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-tap-return"/> &#60;[void]&#62;<a href="#element-handle-tap-return" class="list-anchor">#</a>
 
 This method taps the element by performing the following steps:
@@ -485,10 +529,10 @@ When all steps combined have not finished during the specified `timeout`, this m
 Returns the `node.textContent`.
 
 ## ElementHandle.TypeAsync(text, options) {#element-handle-type}
-- `text`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-param-text"/> &#60;[string]&#62; A text to type into a focused element.<a href="#element-handle-type-param-text" class="list-anchor">#</a>
+- `text`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-text"/> &#60;[string]&#62; A text to type into a focused element.<a href="#element-handle-type-option-text" class="list-anchor">#</a>
 - `options` &#60;`ElementHandleTypeOptions?`&#62;
   - `Delay`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-delay"/> &#60;[double]?&#62; Time to wait between key presses in milliseconds. Defaults to 0.<a href="#element-handle-type-option-delay" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-type-option-no-wait-after" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-type-option-no-wait-after" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-type-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-return"/> &#60;[void]&#62;<a href="#element-handle-type-return" class="list-anchor">#</a>
 
@@ -511,13 +555,13 @@ await elementHandle.PressAsync("Enter");
 
 ## ElementHandle.UncheckAsync(options) {#element-handle-uncheck}
 - `options` &#60;`ElementHandleUncheckOptions?`&#62;
-  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-force"/> &#60;[boolean]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-uncheck-option-force" class="list-anchor">#</a>
-  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-no-wait-after"/> &#60;[boolean]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-uncheck-option-no-wait-after" class="list-anchor">#</a>
+  - `Force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-force"/> &#60;[bool]?&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-uncheck-option-force" class="list-anchor">#</a>
+  - `NoWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-no-wait-after"/> &#60;[bool]?&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-uncheck-option-no-wait-after" class="list-anchor">#</a>
   - `Position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-position"/> &#60;Position?&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-uncheck-option-position" class="list-anchor">#</a>
     - `X` &#60;[double]&#62;
     - `Y` &#60;[double]&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-uncheck-option-timeout" class="list-anchor">#</a>
-  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-trial"/> &#60;[boolean]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-uncheck-option-trial" class="list-anchor">#</a>
+  - `Trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-option-trial"/> &#60;[bool]?&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-uncheck-option-trial" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-uncheck-return"/> &#60;[void]&#62;<a href="#element-handle-uncheck-return" class="list-anchor">#</a>
 
 This method checks the element by performing the following steps:
@@ -533,7 +577,7 @@ If the element is detached from the DOM at any moment during the action, this me
 When all steps combined have not finished during the specified `timeout`, this method throws a [TimeoutError]. Passing zero timeout disables this.
 
 ## ElementHandle.WaitForElementStateAsync(state, options) {#element-handle-wait-for-element-state}
-- `state`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-param-state"/> &#60;"visible"|"hidden"|"stable"|"enabled"|"disabled"|"editable"&#62; A state to wait for, see below for more details.<a href="#element-handle-wait-for-element-state-param-state" class="list-anchor">#</a>
+- `state`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-option-state"/> &#60;`enum ElementState { Visible, Hidden, Stable, Enabled, Disabled, Editable }`&#62; A state to wait for, see below for more details.<a href="#element-handle-wait-for-element-state-option-state" class="list-anchor">#</a>
 - `options` &#60;`ElementHandleWaitForElementStateOptions?`&#62;
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-wait-for-element-state-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-return"/> &#60;[void]&#62;<a href="#element-handle-wait-for-element-state-return" class="list-anchor">#</a>
@@ -551,13 +595,14 @@ Depending on the `state` parameter, this method waits for one of the [actionabil
 If the element does not satisfy the condition for the `timeout` milliseconds, this method will throw.
 
 ## ElementHandle.WaitForSelectorAsync(selector, options) {#element-handle-wait-for-selector}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-wait-for-selector-param-selector" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-wait-for-selector-option-selector" class="list-anchor">#</a>
 - `options` &#60;`ElementHandleWaitForSelectorOptions?`&#62;
-  - `State`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-state"/> &#60;"attached"|"detached"|"visible"|"hidden"&#62; Defaults to `'visible'`. Can be either:<a href="#element-handle-wait-for-selector-option-state" class="list-anchor">#</a>
+  - `State`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-state"/> &#60;`enum WaitForSelectorState { Attached, Detached, Visible, Hidden }?`&#62; Defaults to `'visible'`. Can be either:<a href="#element-handle-wait-for-selector-option-state" class="list-anchor">#</a>
     * `'attached'` - wait for element to be present in DOM.
     * `'detached'` - wait for element to not be present in DOM.
     * `'visible'` - wait for element to have non-empty bounding box and no `visibility:hidden`. Note that element without any content or with `display:none` has an empty bounding box and is not considered visible.
     * `'hidden'` - wait for element to be either detached from DOM, or have an empty bounding box or `visibility:hidden`. This is opposite to the `'visible'` option.
+  - `Strict`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-strict"/> &#60;[bool]?&#62; When true, the call requires selector to resolve to a single element. If given selector resolves to more then one element, the call throws an exception.<a href="#element-handle-wait-for-selector-option-strict" class="list-anchor">#</a>
   - `Timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-timeout"/> &#60;[double]?&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [BrowserContext.SetDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [Page.SetDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-wait-for-selector-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-return"/> &#60;[ElementHandle]?&#62;<a href="#element-handle-wait-for-selector-return" class="list-anchor">#</a>
 
@@ -587,8 +632,10 @@ This method does not work across navigations, use [Page.WaitForSelectorAsync(sel
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -604,7 +651,7 @@ This method does not work across navigations, use [Page.WaitForSelectorAsync(sel
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
@@ -614,28 +661,22 @@ This method does not work across navigations, use [Page.WaitForSelectorAsync(sel
 [UnixTime]: https://en.wikipedia.org/wiki/Unix_time "Unix Time"
 [xpath]: https://developer.mozilla.org/en-US/docs/Web/XPath "xpath"
 
-[Array]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
-[boolean]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"
-[Buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
-[ChildProcess]: https://nodejs.org/api/child_process.html "ChildProcess"
-[Error]: https://nodejs.org/api/errors.html#errors_class_error "Error"
-[EventEmitter]: https://nodejs.org/api/events.html#events_class_eventemitter "EventEmitter"
-[function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
-[Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map "Map"
-[null]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null "null"
-[number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
-[Object]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
-[Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
-[Readable]: https://nodejs.org/api/stream.html#stream_class_stream_readable "Readable"
-[RegExp]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp "RegExp"
-[void]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined "void"
-[string]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "string"
+[bool]: https://docs.microsoft.com/en-us/dotnet/api/system.boolean "bool"
+[double]: https://docs.microsoft.com/en-us/dotnet/api/system.double "double"
+[byte]: https://docs.microsoft.com/en-us/dotnet/api/system.byte "byte"
+[int]: https://docs.microsoft.com/en-us/dotnet/api/system.int32 "int"
+[void]: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/void "void"
+[string]: https://docs.microsoft.com/en-us/dotnet/api/system.string "string"
 [URL]: https://nodejs.org/api/url.html "URL"
+[Regex]: https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex "Regex"
 
-[Action]: https://docs.microsoft.com/en-us/dotnet/api/system.action-1?view=net-5.0 "Action"
-[Func]: https://docs.microsoft.com/en-us/dotnet/api/system.func-2?view=net-5.0 "Func"
-[IEnumerable]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable?view=net-5.0 "IEnumerable"
-[TResult]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1?view=net-5.0 "TResult"
+[Action]: https://docs.microsoft.com/en-us/dotnet/api/system.action-1 "Action"
+[Func]: https://docs.microsoft.com/en-us/dotnet/api/system.func-2 "Func"
+[IEnumerable]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable "IEnumerable"
+[IDictionary]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.idictionary "IDictionary"
+[Task]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0 "Task"
+[IReadOnlyDictionary]: https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlydictionary-2 "IReadOnlyDictionary"
+[JsonElement]: https://docs.microsoft.com/en-us/dotnet/api/system.text.json.jsonelement "JsonElement"
 
 [all available image tags]: https://mcr.microsoft.com/v2/playwright/tags/list "all available image tags"
 [Docker Hub]: https://hub.docker.com/_/microsoft-playwright "Docker Hub"

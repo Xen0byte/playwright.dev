@@ -76,7 +76,7 @@ await myArrayHandle.dispose();
 
 ## Handle Lifecycle
 
-Handles can be acquired using the page methods such as [page.evaluateHandle(pageFunction[, arg])](./api/class-page.mdx#page-evaluate-handle), [page.$(selector)](./api/class-page.mdx#page-query-selector) or [page.$$(selector)](./api/class-page.mdx#page-query-selector-all) or their frame counterparts [frame.evaluateHandle(pageFunction[, arg])](./api/class-frame.mdx#frame-evaluate-handle), [frame.$(selector)](./api/class-frame.mdx#frame-query-selector) or [frame.$$(selector)](./api/class-frame.mdx#frame-query-selector-all). Once created, handles will retain object from [garbage collection](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management) unless page navigates or the handle is manually disposed via the [jsHandle.dispose()](./api/class-jshandle.mdx#js-handle-dispose) method.
+Handles can be acquired using the page methods such as [page.evaluateHandle(pageFunction[, arg])](./api/class-page.mdx#page-evaluate-handle), [page.$(selector[, options])](./api/class-page.mdx#page-query-selector) or [page.$$(selector)](./api/class-page.mdx#page-query-selector-all) or their frame counterparts [frame.evaluateHandle(pageFunction[, arg])](./api/class-frame.mdx#frame-evaluate-handle), [frame.$(selector[, options])](./api/class-frame.mdx#frame-query-selector) or [frame.$$(selector)](./api/class-frame.mdx#frame-query-selector-all). Once created, handles will retain object from [garbage collection](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management) unless page navigates or the handle is manually disposed via the [jsHandle.dispose()](./api/class-jshandle.mdx#js-handle-dispose) method.
 
 ### API reference
 - [JSHandle]
@@ -88,7 +88,7 @@ Handles can be acquired using the page methods such as [page.evaluateHandle(page
 - [elementHandle.textContent()](./api/class-elementhandle.mdx#element-handle-text-content)
 - [jsHandle.evaluate(pageFunction[, arg])](./api/class-jshandle.mdx#js-handle-evaluate)
 - [page.evaluateHandle(pageFunction[, arg])](./api/class-page.mdx#page-evaluate-handle)
-- [page.$(selector)](./api/class-page.mdx#page-query-selector)
+- [page.$(selector[, options])](./api/class-page.mdx#page-query-selector)
 - [page.$$(selector)](./api/class-page.mdx#page-query-selector-all)
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
@@ -97,6 +97,9 @@ Handles can be acquired using the page methods such as [page.evaluateHandle(page
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -111,8 +114,10 @@ Handles can be acquired using the page methods such as [page.evaluateHandle(page
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -127,8 +132,22 @@ Handles can be acquired using the page methods such as [page.evaluateHandle(page
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

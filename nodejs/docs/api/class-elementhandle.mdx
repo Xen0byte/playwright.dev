@@ -7,24 +7,40 @@ import TabItem from '@theme/TabItem';
 
 * extends: [JSHandle]
 
-ElementHandle represents an in-page DOM element. ElementHandles can be created with the [page.$(selector)](./api/class-page.mdx#page-query-selector) method.
+ElementHandle represents an in-page DOM element. ElementHandles can be created with the [page.$(selector[, options])](./api/class-page.mdx#page-query-selector) method.
 
 ```js
-const { chromium } = require('playwright');  // Or 'firefox' or 'webkit'.
-
-(async () => {
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-  await page.goto('https://example.com');
-  const hrefElement = await page.$('a');
-  await hrefElement.click();
-  // ...
-})();
+const hrefElement = await page.$('a');
+await hrefElement.click();
 ```
 
 ElementHandle prevents DOM element from garbage collection unless the handle is disposed with [jsHandle.dispose()](./api/class-jshandle.mdx#js-handle-dispose). ElementHandles are auto-disposed when their origin frame gets navigated.
 
-ElementHandle instances can be used as an argument in [page.$eval(selector, pageFunction[, arg])](./api/class-page.mdx#page-eval-on-selector) and [page.evaluate(pageFunction[, arg])](./api/class-page.mdx#page-evaluate) methods.
+ElementHandle instances can be used as an argument in [page.$eval(selector, pageFunction[, arg, options])](./api/class-page.mdx#page-eval-on-selector) and [page.evaluate(pageFunction[, arg])](./api/class-page.mdx#page-evaluate) methods.
+
+:::note
+In most cases, you would want to use the [Locator] object instead. You should only use [ElementHandle] if you want to retain a handle to a particular DOM Node that you intend to pass into [page.evaluate(pageFunction[, arg])](./api/class-page.mdx#page-evaluate) as an argument.
+:::
+
+The difference between the [Locator] and ElementHandle is that the ElementHandle points to a particular element, while [Locator] captures the logic of how to retrieve an element.
+
+In the example below, handle points to a particular DOM element on page. If that element changes text or is used by React to render an entirely different component, handle is still pointing to that very DOM element. This can lead to unexpected behaviors.
+
+```js
+const handle = await page.$('text=Submit');
+// ...
+await handle.hover();
+await handle.click();
+```
+
+With the locator, every time the `element` is used, up-to-date DOM element is located in the page using the selector. So in the snippet below, underlying DOM element is going to be located twice.
+
+```js
+const locator = page.locator('text=Submit');
+// ...
+await locator.hover();
+await locator.click();
+```
 
 
 - [elementHandle.$(selector)](./api/class-elementhandle.mdx#element-handle-query-selector)
@@ -43,6 +59,7 @@ ElementHandle instances can be used as an argument in [page.$eval(selector, page
 - [elementHandle.hover([options])](./api/class-elementhandle.mdx#element-handle-hover)
 - [elementHandle.innerHTML()](./api/class-elementhandle.mdx#element-handle-inner-html)
 - [elementHandle.innerText()](./api/class-elementhandle.mdx#element-handle-inner-text)
+- [elementHandle.inputValue([options])](./api/class-elementhandle.mdx#element-handle-input-value)
 - [elementHandle.isChecked()](./api/class-elementhandle.mdx#element-handle-is-checked)
 - [elementHandle.isDisabled()](./api/class-elementhandle.mdx#element-handle-is-disabled)
 - [elementHandle.isEditable()](./api/class-elementhandle.mdx#element-handle-is-editable)
@@ -55,6 +72,7 @@ ElementHandle instances can be used as an argument in [page.$eval(selector, page
 - [elementHandle.scrollIntoViewIfNeeded([options])](./api/class-elementhandle.mdx#element-handle-scroll-into-view-if-needed)
 - [elementHandle.selectOption(values[, options])](./api/class-elementhandle.mdx#element-handle-select-option)
 - [elementHandle.selectText([options])](./api/class-elementhandle.mdx#element-handle-select-text)
+- [elementHandle.setChecked(checked[, options])](./api/class-elementhandle.mdx#element-handle-set-checked)
 - [elementHandle.setInputFiles(files[, options])](./api/class-elementhandle.mdx#element-handle-set-input-files)
 - [elementHandle.tap([options])](./api/class-elementhandle.mdx#element-handle-tap)
 - [elementHandle.textContent()](./api/class-elementhandle.mdx#element-handle-text-content)
@@ -71,21 +89,21 @@ ElementHandle instances can be used as an argument in [page.$eval(selector, page
 - [jsHandle.jsonValue()](./api/class-jshandle.mdx#js-handle-json-value)
 
 ## elementHandle.$(selector) {#element-handle-query-selector}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-param-selector" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-option-selector" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-return"/> &#60;[Promise]<[null]|[ElementHandle]>&#62;<a href="#element-handle-query-selector-return" class="list-anchor">#</a>
 
 The method finds an element matching the specified selector in the `ElementHandle`'s subtree. See [Working with selectors](./selectors.mdx) for more details. If no elements match the selector, returns `null`.
 
 ## elementHandle.$$(selector) {#element-handle-query-selector-all}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-all-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-all-param-selector" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-all-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-query-selector-all-option-selector" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-query-selector-all-return"/> &#60;[Promise]<[Array]<[ElementHandle]>>&#62;<a href="#element-handle-query-selector-all-return" class="list-anchor">#</a>
 
 The method finds all elements matching the specified selector in the `ElementHandle`s subtree. See [Working with selectors](./selectors.mdx) for more details. If no elements match the selector, returns empty array.
 
 ## elementHandle.$eval(selector, pageFunction[, arg]) {#element-handle-eval-on-selector}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-param-selector" class="list-anchor">#</a>
-- `pageFunction`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-param-expression"/> &#60;[function]\([Element]\)&#62; Function to be evaluated in the page context.<a href="#element-handle-eval-on-selector-param-expression" class="list-anchor">#</a>
-- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-param-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `pageFunction`.<a href="#element-handle-eval-on-selector-param-arg" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-option-selector" class="list-anchor">#</a>
+- `pageFunction`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-option-expression"/> &#60;[function]\([Element]\)&#62; Function to be evaluated in the page context.<a href="#element-handle-eval-on-selector-option-expression" class="list-anchor">#</a>
+- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-option-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `pageFunction`.<a href="#element-handle-eval-on-selector-option-arg" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-return"/> &#60;[Promise]<[Serializable]>&#62;<a href="#element-handle-eval-on-selector-return" class="list-anchor">#</a>
 
 Returns the return value of `pageFunction`.
@@ -103,9 +121,9 @@ expect(await tweetHandle.$eval('.retweets', node => node.innerText)).toBe('10');
 ```
 
 ## elementHandle.$$eval(selector, pageFunction[, arg]) {#element-handle-eval-on-selector-all}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-all-param-selector" class="list-anchor">#</a>
-- `pageFunction`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-param-expression"/> &#60;[function]\([Array]<[Element]>\)&#62; Function to be evaluated in the page context.<a href="#element-handle-eval-on-selector-all-param-expression" class="list-anchor">#</a>
-- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-param-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `pageFunction`.<a href="#element-handle-eval-on-selector-all-param-arg" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-eval-on-selector-all-option-selector" class="list-anchor">#</a>
+- `pageFunction`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-option-expression"/> &#60;[function]\([Array]<[Element]>\)&#62; Function to be evaluated in the page context.<a href="#element-handle-eval-on-selector-all-option-expression" class="list-anchor">#</a>
+- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-option-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `pageFunction`.<a href="#element-handle-eval-on-selector-all-option-arg" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-eval-on-selector-all-return"/> &#60;[Promise]<[Serializable]>&#62;<a href="#element-handle-eval-on-selector-all-return" class="list-anchor">#</a>
 
 Returns the return value of `pageFunction`.
@@ -230,8 +248,8 @@ When all steps combined have not finished during the specified `timeout`, this m
 :::
 
 ## elementHandle.dispatchEvent(type[, eventInit]) {#element-handle-dispatch-event}
-- `type`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-param-type"/> &#60;[string]&#62; DOM event type: `"click"`, `"dragstart"`, etc.<a href="#element-handle-dispatch-event-param-type" class="list-anchor">#</a>
-- `eventInit`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-param-event-init"/> &#60;[EvaluationArgument]&#62; Optional event-specific initialization properties.<a href="#element-handle-dispatch-event-param-event-init" class="list-anchor">#</a>
+- `type`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-option-type"/> &#60;[string]&#62; DOM event type: `"click"`, `"dragstart"`, etc.<a href="#element-handle-dispatch-event-option-type" class="list-anchor">#</a>
+- `eventInit`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-option-event-init"/> &#60;[EvaluationArgument]&#62; Optional event-specific initialization properties.<a href="#element-handle-dispatch-event-option-event-init" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-dispatch-event-return"/> &#60;[Promise]<[void]>&#62;<a href="#element-handle-dispatch-event-return" class="list-anchor">#</a>
 
 The snippet below dispatches the `click` event on the element. Regardless of the visibility state of the element, `click` is dispatched. This is equivalent to calling [element.click()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click).
@@ -260,8 +278,9 @@ await elementHandle.dispatchEvent('dragstart', { dataTransfer });
 ```
 
 ## elementHandle.fill(value[, options]) {#element-handle-fill}
-- `value`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-param-value"/> &#60;[string]&#62; Value to set for the `<input>`, `<textarea>` or `[contenteditable]` element.<a href="#element-handle-fill-param-value" class="list-anchor">#</a>
+- `value`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-value"/> &#60;[string]&#62; Value to set for the `<input>`, `<textarea>` or `[contenteditable]` element.<a href="#element-handle-fill-option-value" class="list-anchor">#</a>
 - `options` &#60;[Object]&#62;
+  - `force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-force"/> &#60;[boolean]&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-fill-option-force" class="list-anchor">#</a>
   - `noWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-no-wait-after"/> &#60;[boolean]&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-fill-option-no-wait-after" class="list-anchor">#</a>
   - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-fill-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-fill-return"/> &#60;[Promise]<[void]>&#62;<a href="#element-handle-fill-return" class="list-anchor">#</a>
@@ -278,7 +297,7 @@ To send fine-grained keyboard events, use [elementHandle.type(text[, options])](
 Calls [focus](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus) on the element.
 
 ## elementHandle.getAttribute(name) {#element-handle-get-attribute}
-- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-get-attribute-param-name"/> &#60;[string]&#62; Attribute name to get the value for.<a href="#element-handle-get-attribute-param-name" class="list-anchor">#</a>
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-get-attribute-option-name"/> &#60;[string]&#62; Attribute name to get the value for.<a href="#element-handle-get-attribute-option-name" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-get-attribute-return"/> &#60;[Promise]<[null]|[string]>&#62;<a href="#element-handle-get-attribute-return" class="list-anchor">#</a>
 
 Returns element attribute value.
@@ -313,6 +332,13 @@ Returns the `element.innerHTML`.
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-inner-text-return"/> &#60;[Promise]<[string]>&#62;<a href="#element-handle-inner-text-return" class="list-anchor">#</a>
 
 Returns the `element.innerText`.
+
+## elementHandle.inputValue([options]) {#element-handle-input-value}
+- `options` &#60;[Object]&#62;
+  - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-input-value-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-input-value-option-timeout" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-input-value-return"/> &#60;[Promise]<[string]>&#62;<a href="#element-handle-input-value-return" class="list-anchor">#</a>
+
+Returns `input.value` for `<input>` or `<textarea>` or `<select>` element. Throws for non-input elements.
 
 ## elementHandle.isChecked() {#element-handle-is-checked}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-is-checked-return"/> &#60;[Promise]<[boolean]>&#62;<a href="#element-handle-is-checked-return" class="list-anchor">#</a>
@@ -350,7 +376,7 @@ Returns whether the element is [visible](./actionability.mdx#visible).
 Returns the frame containing the given element.
 
 ## elementHandle.press(key[, options]) {#element-handle-press}
-- `key`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-param-key"/> &#60;[string]&#62; Name of the key to press or a character to generate, such as `ArrowLeft` or `a`.<a href="#element-handle-press-param-key" class="list-anchor">#</a>
+- `key`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-key"/> &#60;[string]&#62; Name of the key to press or a character to generate, such as `ArrowLeft` or `a`.<a href="#element-handle-press-option-key" class="list-anchor">#</a>
 - `options` &#60;[Object]&#62;
   - `delay`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-delay"/> &#60;[number]&#62; Time to wait between `keydown` and `keyup` in milliseconds. Defaults to 0.<a href="#element-handle-press-option-delay" class="list-anchor">#</a>
   - `noWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-press-option-no-wait-after"/> &#60;[boolean]&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-press-option-no-wait-after" class="list-anchor">#</a>
@@ -394,11 +420,12 @@ This method waits for [actionability](./actionability.mdx) checks, then tries to
 Throws when `elementHandle` does not point to an element [connected](https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected) to a Document or a ShadowRoot.
 
 ## elementHandle.selectOption(values[, options]) {#element-handle-select-option}
-- `values`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-param-values"/> &#60;[null]|[string]|[ElementHandle]|[Array]<[string]>|[Object]|[Array]<[ElementHandle]>|[Array]<[Object]>&#62; Options to select. If the `<select>` has the `multiple` attribute, all matching options are selected, otherwise only the first option matching one of the passed options is selected. String values are equivalent to `{value:'string'}`. Option is considered matching if all specified properties match.<a href="#element-handle-select-option-param-values" class="list-anchor">#</a>
+- `values`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-values"/> &#60;[null]|[string]|[ElementHandle]|[Array]<[string]>|[Object]|[Array]<[ElementHandle]>|[Array]<[Object]>&#62; Options to select. If the `<select>` has the `multiple` attribute, all matching options are selected, otherwise only the first option matching one of the passed options is selected. String values are equivalent to `{value:'string'}`. Option is considered matching if all specified properties match.<a href="#element-handle-select-option-option-values" class="list-anchor">#</a>
   - `value` &#60;[string]&#62; Matches by `option.value`. Optional.
   - `label` &#60;[string]&#62; Matches by `option.label`. Optional.
   - `index` &#60;[number]&#62; Matches by the index. Optional.
 - `options` &#60;[Object]&#62;
+  - `force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-force"/> &#60;[boolean]&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-select-option-option-force" class="list-anchor">#</a>
   - `noWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-no-wait-after"/> &#60;[boolean]&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-select-option-option-no-wait-after" class="list-anchor">#</a>
   - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-select-option-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-option-return"/> &#60;[Promise]<[Array]<[string]>>&#62;<a href="#element-handle-select-option-return" class="list-anchor">#</a>
@@ -424,13 +451,37 @@ handle.selectOption(['red', 'green', 'blue']);
 
 ## elementHandle.selectText([options]) {#element-handle-select-text}
 - `options` &#60;[Object]&#62;
+  - `force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-text-option-force"/> &#60;[boolean]&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-select-text-option-force" class="list-anchor">#</a>
   - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-text-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-select-text-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-select-text-return"/> &#60;[Promise]<[void]>&#62;<a href="#element-handle-select-text-return" class="list-anchor">#</a>
 
 This method waits for [actionability](./actionability.mdx) checks, then focuses the element and selects all its text content.
 
+## elementHandle.setChecked(checked[, options]) {#element-handle-set-checked}
+- `checked`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-checked"/> &#60;[boolean]&#62; Whether to check or uncheck the checkbox.<a href="#element-handle-set-checked-option-checked" class="list-anchor">#</a>
+- `options` &#60;[Object]&#62;
+  - `force`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-force"/> &#60;[boolean]&#62; Whether to bypass the [actionability](./actionability.mdx) checks. Defaults to `false`.<a href="#element-handle-set-checked-option-force" class="list-anchor">#</a>
+  - `noWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-no-wait-after"/> &#60;[boolean]&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-set-checked-option-no-wait-after" class="list-anchor">#</a>
+  - `position`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-position"/> &#60;[Object]&#62; A point to use relative to the top-left corner of element padding box. If not specified, uses some visible point of the element.<a href="#element-handle-set-checked-option-position" class="list-anchor">#</a>
+    - `x` &#60;[number]&#62;
+    - `y` &#60;[number]&#62;
+  - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-set-checked-option-timeout" class="list-anchor">#</a>
+  - `trial`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-option-trial"/> &#60;[boolean]&#62; When set, this method only performs the [actionability](./actionability.mdx) checks and skips the action. Defaults to `false`. Useful to wait until the element is ready for the action without performing it.<a href="#element-handle-set-checked-option-trial" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-checked-return"/> &#60;[Promise]<[void]>&#62;<a href="#element-handle-set-checked-return" class="list-anchor">#</a>
+
+This method checks or unchecks an element by performing the following steps:
+1. Ensure that element is a checkbox or a radio input. If not, this method throws.
+1. If the element already has the right checked state, this method returns immediately.
+1. Wait for [actionability](./actionability.mdx) checks on the matched element, unless `force` option is set. If the element is detached during the checks, the whole action is retried.
+1. Scroll the element into view if needed.
+1. Use [page.mouse](./api/class-page.mdx#page-mouse) to click in the center of the element.
+1. Wait for initiated navigations to either succeed or fail, unless `noWaitAfter` option is set.
+1. Ensure that the element is now checked or unchecked. If not, this method throws.
+
+When all steps combined have not finished during the specified `timeout`, this method throws a [TimeoutError]. Passing zero timeout disables this.
+
 ## elementHandle.setInputFiles(files[, options]) {#element-handle-set-input-files}
-- `files`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-param-files"/> &#60;[string]|[Array]<[string]>|[Object]|[Array]<[Object]>&#62;<a href="#element-handle-set-input-files-param-files" class="list-anchor">#</a>
+- `files`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-set-input-files-option-files"/> &#60;[string]|[Array]<[string]>|[Object]|[Array]<[Object]>&#62;<a href="#element-handle-set-input-files-option-files" class="list-anchor">#</a>
   - `name` &#60;[string]&#62; File name
   - `mimeType` &#60;[string]&#62; File type
   - `buffer` &#60;[Buffer]&#62; File content
@@ -475,7 +526,7 @@ When all steps combined have not finished during the specified `timeout`, this m
 Returns the `node.textContent`.
 
 ## elementHandle.type(text[, options]) {#element-handle-type}
-- `text`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-param-text"/> &#60;[string]&#62; A text to type into a focused element.<a href="#element-handle-type-param-text" class="list-anchor">#</a>
+- `text`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-text"/> &#60;[string]&#62; A text to type into a focused element.<a href="#element-handle-type-option-text" class="list-anchor">#</a>
 - `options` &#60;[Object]&#62;
   - `delay`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-delay"/> &#60;[number]&#62; Time to wait between key presses in milliseconds. Defaults to 0.<a href="#element-handle-type-option-delay" class="list-anchor">#</a>
   - `noWaitAfter`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-type-option-no-wait-after"/> &#60;[boolean]&#62; Actions that initiate navigations are waiting for these navigations to happen and for pages to start loading. You can opt out of waiting via setting this flag. You would only need this option in the exceptional cases such as navigating to inaccessible pages. Defaults to `false`.<a href="#element-handle-type-option-no-wait-after" class="list-anchor">#</a>
@@ -523,7 +574,7 @@ If the element is detached from the DOM at any moment during the action, this me
 When all steps combined have not finished during the specified `timeout`, this method throws a [TimeoutError]. Passing zero timeout disables this.
 
 ## elementHandle.waitForElementState(state[, options]) {#element-handle-wait-for-element-state}
-- `state`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-param-state"/> &#60;"visible"|"hidden"|"stable"|"enabled"|"disabled"|"editable"&#62; A state to wait for, see below for more details.<a href="#element-handle-wait-for-element-state-param-state" class="list-anchor">#</a>
+- `state`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-option-state"/> &#60;"visible"|"hidden"|"stable"|"enabled"|"disabled"|"editable"&#62; A state to wait for, see below for more details.<a href="#element-handle-wait-for-element-state-option-state" class="list-anchor">#</a>
 - `options` &#60;[Object]&#62;
   - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-wait-for-element-state-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-element-state-return"/> &#60;[Promise]<[void]>&#62;<a href="#element-handle-wait-for-element-state-return" class="list-anchor">#</a>
@@ -541,13 +592,14 @@ Depending on the `state` parameter, this method waits for one of the [actionabil
 If the element does not satisfy the condition for the `timeout` milliseconds, this method will throw.
 
 ## elementHandle.waitForSelector(selector[, options]) {#element-handle-wait-for-selector}
-- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-param-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-wait-for-selector-param-selector" class="list-anchor">#</a>
+- `selector`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-selector"/> &#60;[string]&#62; A selector to query for. See [working with selectors](./selectors.mdx) for more details.<a href="#element-handle-wait-for-selector-option-selector" class="list-anchor">#</a>
 - `options` &#60;[Object]&#62;
   - `state`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-state"/> &#60;"attached"|"detached"|"visible"|"hidden"&#62; Defaults to `'visible'`. Can be either:<a href="#element-handle-wait-for-selector-option-state" class="list-anchor">#</a>
     * `'attached'` - wait for element to be present in DOM.
     * `'detached'` - wait for element to not be present in DOM.
     * `'visible'` - wait for element to have non-empty bounding box and no `visibility:hidden`. Note that element without any content or with `display:none` has an empty bounding box and is not considered visible.
     * `'hidden'` - wait for element to be either detached from DOM, or have an empty bounding box or `visibility:hidden`. This is opposite to the `'visible'` option.
+  - `strict`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-strict"/> &#60;[boolean]&#62; When true, the call requires selector to resolve to a single element. If given selector resolves to more then one element, the call throws an exception.<a href="#element-handle-wait-for-selector-option-strict" class="list-anchor">#</a>
   - `timeout`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-option-timeout"/> &#60;[number]&#62; Maximum time in milliseconds, defaults to 30 seconds, pass `0` to disable timeout. The default value can be changed by using the [browserContext.setDefaultTimeout(timeout)](./api/class-browsercontext.mdx#browser-context-set-default-timeout) or [page.setDefaultTimeout(timeout)](./api/class-page.mdx#page-set-default-timeout) methods.<a href="#element-handle-wait-for-selector-option-timeout" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="element-handle-wait-for-selector-return"/> &#60;[Promise]<[null]|[ElementHandle]>&#62;<a href="#element-handle-wait-for-selector-return" class="list-anchor">#</a>
 
@@ -573,6 +625,9 @@ This method does not work across navigations, use [page.waitForSelector(selector
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -587,8 +642,10 @@ This method does not work across navigations, use [page.waitForSelector(selector
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -603,8 +660,22 @@ This method does not work across navigations, use [page.waitForSelector(selector
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

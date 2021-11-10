@@ -9,9 +9,61 @@ import TabItem from '@theme/TabItem';
 
 TimeoutError is emitted whenever certain operations are terminated due to timeout, e.g. [page.wait_for_selector(selector, **kwargs)](./api/class-page.mdx#page-wait-for-selector) or [browser_type.launch(**kwargs)](./api/class-browsertype.mdx#browser-type-launch).
 
+<Tabs
+  groupId="python-flavor"
+  defaultValue="sync"
+  values={[
+    {label: 'Sync', value: 'sync'},
+    {label: 'Async', value: 'async'}
+  ]
+}>
+<TabItem value="sync">
+
+```py
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+    try:
+      page.click("text=Example", timeout=100)
+    except PlaywrightTimeoutError:
+      print("Timeout!")
+    browser.close()
+```
+
+</TabItem>
+<TabItem value="async">
+
+```py
+import asyncio
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
+
+async def run(playwright):
+    browser = await playwright.chromium.launch()
+    page = await browser.new_page()
+    try:
+      await page.click("text=Example", timeout=100)
+    except PlaywrightTimeoutError:
+      print("Timeout!")
+    await browser.close()
+
+async def main():
+    async with async_playwright() as playwright:
+        await run(playwright)
+
+asyncio.run(main())
+```
+
+</TabItem>
+</Tabs>
+
 
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -23,8 +75,10 @@ TimeoutError is emitted whenever certain operations are terminated due to timeou
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -39,7 +93,7 @@ TimeoutError is emitted whenever certain operations are terminated due to timeou
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

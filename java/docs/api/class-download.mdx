@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 [Download] objects are dispatched by page via the [Page.onDownload(handler)](./api/class-page.mdx#page-event-download) event.
 
-If `downloadsPath` isn't specified, all the downloaded files belonging to the browser context are deleted when the browser context is closed. And all downloaded files are deleted when the browser closes.
+All the downloaded files belonging to the browser context are deleted when the browser context is closed.
 
 Download event is emitted once the download starts. Download path becomes available once download completes:
 
@@ -32,7 +32,7 @@ Browser context **must** be created with the `acceptDownloads` set to `true` whe
 :::
 
 
-- [Download._cancel()](./api/class-download.mdx#download-cancel)
+- [Download.cancel()](./api/class-download.mdx#download-cancel)
 - [Download.createReadStream()](./api/class-download.mdx#download-create-read-stream)
 - [Download.delete()](./api/class-download.mdx#download-delete)
 - [Download.failure()](./api/class-download.mdx#download-failure)
@@ -42,12 +42,10 @@ Browser context **must** be created with the `acceptDownloads` set to `true` whe
 - [Download.suggestedFilename()](./api/class-download.mdx#download-suggested-filename)
 - [Download.url()](./api/class-download.mdx#download-url)
 
-## Download._cancel() {#download-cancel}
+## Download.cancel() {#download-cancel}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="download-cancel-return"/> &#60;[void]&#62;<a href="#download-cancel-return" class="list-anchor">#</a>
 
-**Chromium-only** Cancels a download. Will not fail if the download is already finished or canceled. Upon successful cancellations, `download.failure()` would resolve to `'canceled'`.
-
-Currently **experimental** and may subject to further changes.
+Cancels a download. Will not fail if the download is already finished or canceled. Upon successful cancellations, `download.failure()` would resolve to `'canceled'`.
 
 ## Download.createReadStream() {#download-create-read-stream}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="download-create-read-stream-return"/> &#60;[null]|[InputStream]&#62;<a href="#download-create-read-stream-return" class="list-anchor">#</a>
@@ -74,8 +72,10 @@ Get the page that the download belongs to.
 
 Returns path to the downloaded file in case of successful download. The method will wait for the download to finish if necessary. The method throws when connected remotely.
 
+Note that the download's file name is a random GUID, use [Download.suggestedFilename()](./api/class-download.mdx#download-suggested-filename) to get suggested file name.
+
 ## Download.saveAs(path) {#download-save-as}
-- `path`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="download-save-as-param-path"/> &#60;[Path]&#62; Path where the download should be copied.<a href="#download-save-as-param-path" class="list-anchor">#</a>
+- `path`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="download-save-as-option-path"/> &#60;[Path]&#62; Path where the download should be copied.<a href="#download-save-as-option-path" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="download-save-as-return"/> &#60;[void]&#62;<a href="#download-save-as-return" class="list-anchor">#</a>
 
 Copy the download to a user-specified path. It is safe to call this method while the download is still in progress. Will wait for the download to finish if necessary.
@@ -99,11 +99,16 @@ Returns downloaded url.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -117,7 +122,7 @@ Returns downloaded url.
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

@@ -5,7 +5,7 @@ title: "Route"
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-Whenever a network route is set up with [page.route(url, handler)](./api/class-page.mdx#page-route) or [browserContext.route(url, handler)](./api/class-browsercontext.mdx#browser-context-route), the `Route` object allows to handle the route.
+Whenever a network route is set up with [page.route(url, handler[, options])](./api/class-page.mdx#page-route) or [browserContext.route(url, handler[, options])](./api/class-browsercontext.mdx#browser-context-route), the `Route` object allows to handle the route.
 
 
 - [route.abort([errorCode])](./api/class-route.mdx#route-abort)
@@ -14,7 +14,7 @@ Whenever a network route is set up with [page.route(url, handler)](./api/class-p
 - [route.request()](./api/class-route.mdx#route-request)
 
 ## route.abort([errorCode]) {#route-abort}
-- `errorCode`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-abort-param-error-code"/> &#60;[string]&#62; Optional error code. Defaults to `failed`, could be one of the following:<a href="#route-abort-param-error-code" class="list-anchor">#</a>
+- `errorCode`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-abort-option-error-code"/> &#60;[string]&#62; Optional error code. Defaults to `failed`, could be one of the following:<a href="#route-abort-option-error-code" class="list-anchor">#</a>
   * `'aborted'` - An operation was aborted (due to user action)
   * `'accessdenied'` - Permission to access a resource, other than the network, was denied
   * `'addressunreachable'` - The IP address is unreachable. This usually means that there is no route to the specified host or network.
@@ -61,6 +61,7 @@ await page.route('**/*', (route, request) => {
   - `contentType`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-fulfill-option-content-type"/> &#60;[string]&#62; If set, equals to setting `Content-Type` response header.<a href="#route-fulfill-option-content-type" class="list-anchor">#</a>
   - `headers`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-fulfill-option-headers"/> &#60;[Object]<[string], [string]>&#62; Response headers. Header values will be converted to a string.<a href="#route-fulfill-option-headers" class="list-anchor">#</a>
   - `path`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-fulfill-option-path"/> &#60;[string]&#62; File path to respond with. The content type will be inferred from file extension. If `path` is a relative path, then it is resolved relative to the current working directory.<a href="#route-fulfill-option-path" class="list-anchor">#</a>
+  - `response`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-fulfill-option-response"/> &#60;[APIResponse]&#62; [APIResponse] to fulfill route's request with. Individual fields of the response (such as headers) can be overridden using fulfill options.<a href="#route-fulfill-option-response" class="list-anchor">#</a>
   - `status`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-fulfill-option-status"/> &#60;[number]&#62; Response status code, defaults to `200`.<a href="#route-fulfill-option-status" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="route-fulfill-return"/> &#60;[Promise]<[void]>&#62;<a href="#route-fulfill-return" class="list-anchor">#</a>
 
@@ -95,6 +96,9 @@ A request to be routed.
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -109,8 +113,10 @@ A request to be routed.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -125,8 +131,22 @@ A request to be routed.
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

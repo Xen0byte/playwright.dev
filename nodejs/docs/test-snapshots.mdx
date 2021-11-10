@@ -17,13 +17,13 @@ Playwright Test includes the ability to produce and visually compare screenshots
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // example.spec.ts
 import { test, expect } from '@playwright/test';
 
 test('example test', async ({ page }) => {
   await page.goto('https://playwright.dev');
-  expect(await page.screenshot()).toMatchSnapshot('snapshot-name.png');
+  expect(await page.screenshot()).toMatchSnapshot('landing.png');
 });
 ```
 
@@ -36,18 +36,46 @@ const { test, expect } = require('@playwright/test');
 
 test('example test', async ({ page }) => {
   await page.goto('https://playwright.dev');
-  expect(await page.screenshot()).toMatchSnapshot('snapshot-name.png');
+  expect(await page.screenshot()).toMatchSnapshot('landing.png');
 });
 ```
 
 </TabItem>
 </Tabs>
 
+When you run above for the first time, test runner will say:
+
+```
+Error: example.spec.ts-snapshots/landing-chromium-darwin.png is missing in snapshots, writing actual.
+```
+
+That's because there was no golden file for your `landing.png` snapshot. It is now created and is ready to be added to the repository. The name of the folder with the golden expectations starts with the name of your test file:
+
+```bash
+drwxr-xr-x  5 user  group  160 Jun  4 11:46 .
+drwxr-xr-x  6 user  group  192 Jun  4 11:45 ..
+-rw-r--r--  1 user  group  231 Jun  4 11:16 example.spec.ts
+drwxr-xr-x  3 user  group   96 Jun  4 11:46 example.spec.ts-snapshots
+```
+
+Note the `chromium-darwin` in the generated snapshot file name - it contains the browser name and the platform. Screenshots differ between browsers and platforms due to different rendering, fonts and more, so you will need different snapshots for them. If you use multiple projects in your [configuration file](./test-configuration.mdx), project name will be used instead of `chromium`.
+
+If you are not on the same operating system as your CI system, you can use Docker to generate/update the screenshots:
+
+```bash
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.12.3-focal /bin/bash
+npm install
+npx playwright test --update-snapshots
+```
+
 Sometimes you need to update the reference screenshot, for example when the page has changed. Do this with the  `--update-snapshots` flag.
 
 ```bash
 npx playwright test --update-snapshots
 ```
+
+> Note that `snapshotName` also accepts an array of path segments to the snapshot file such as `expect(value).toMatchSnapshot(['relative', 'path', 'to', 'snapshot.png'])`.
+> However, this path must stay within the snapshots directory for each test file (i.e. `a.spec.js-snapshots`), otherwise it will throw.
 
 Playwright Test uses the [pixelmatch](https://github.com/mapbox/pixelmatch) library. You can pass comparison `threshold` as an option.
 
@@ -61,7 +89,7 @@ Playwright Test uses the [pixelmatch](https://github.com/mapbox/pixelmatch) libr
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // example.spec.ts
 import { test, expect } from '@playwright/test';
 
@@ -99,7 +127,7 @@ If you'd like to share the default value among all the tests in the project, you
 }>
 <TabItem value="ts">
 
-```js
+```ts
 import { PlaywrightTestConfig } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   expect: {
@@ -137,7 +165,7 @@ Here we compare text content against the reference.
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // example.spec.ts
 import { test, expect } from '@playwright/test';
 
@@ -171,6 +199,9 @@ Snapshots are stored next to the test file, in a separate directory. For example
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -185,8 +216,10 @@ Snapshots are stored next to the test file, in a separate directory. For example
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -201,8 +234,22 @@ Snapshots are stored next to the test file, in a separate directory. For example
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

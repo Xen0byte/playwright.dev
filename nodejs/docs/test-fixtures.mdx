@@ -8,6 +8,7 @@ import TabItem from '@theme/TabItem';
 - [Introduction to fixtures](#introduction-to-fixtures)
 - [Test fixtures](#test-fixtures)
 - [Worker fixtures](#worker-fixtures)
+- [Overriding fixtures](#overriding-fixtures)
 
 ## Introduction to fixtures
 
@@ -63,7 +64,7 @@ test.describe('todo tests', () => {
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // example.spec.ts
 import { test as base } from '@playwright/test';
 import { TodoPage } from './todo-page';
@@ -143,7 +144,7 @@ Test fixtures are set up for each test. Consider the following test file:
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // hello.spec.ts
 import test from './hello';
 
@@ -189,7 +190,7 @@ Here is how test fixtures are declared and defined. Fixtures can use other fixtu
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // hello.ts
 import { test as base } from '@playwright/test';
 
@@ -267,7 +268,7 @@ Here is how the test looks:
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // express.spec.ts
 import test from './express-test';
 import fetch from 'node-fetch';
@@ -317,7 +318,7 @@ And here is how fixtures are declared and defined:
 }>
 <TabItem value="ts">
 
-```js
+```ts
 // express-test.ts
 import { test as base } from '@playwright/test';
 import express from 'express';
@@ -422,12 +423,123 @@ module.exports = base.test.extend({
 </TabItem>
 </Tabs>
 
+## Overriding fixtures
+
+In addition to creating your own fixtures, you can also override existing fixtures to fit your needs. Consider the following example which overrides the `page` fixture by navigating to a specified URL:
+
+<Tabs
+  groupId="js-flavor"
+  defaultValue="ts"
+  values={[
+    {label: 'TypeScript', value: 'ts'},
+    {label: 'JavaScript', value: 'js'}
+  ]
+}>
+<TabItem value="ts">
+
+```ts
+import { test as base } from '@playwright/test';
+
+export const test = base.extend({
+  page: async ({ baseURL, page }, use) => {
+    await page.goto(baseURL);
+    await use(page);
+  },
+});
+```
+
+</TabItem>
+<TabItem value="js">
+
+```js
+const base = require('@playwright/test');
+
+exports.test = base.test.extend({
+  page: async ({ baseURL, page }, use) => {
+    await page.goto(baseURL);
+    await use(page);
+  },
+});
+```
+
+</TabItem>
+</Tabs>
+
+Notice that in this example, the `page` fixture is able to depend on other built in fixtures such as `baseURL`. This allows us to override the `baseURL` used by the `page` fixture in our tests using `test.use`.
+
+<Tabs
+  groupId="js-flavor"
+  defaultValue="ts"
+  values={[
+    {label: 'TypeScript', value: 'ts'},
+    {label: 'JavaScript', value: 'js'}
+  ]
+}>
+<TabItem value="ts">
+
+```ts
+test.use({ baseURL: 'https://playwright.dev' })
+```
+
+</TabItem>
+<TabItem value="js">
+
+```js
+test.use({ baseURL: 'https://playwright.dev' })
+```
+
+</TabItem>
+</Tabs>
+
+Fixtures can also be overridden where the base fixture is completely replaced with something different. For example, we could override the `storageState` fixture to provide our own data.
+
+<Tabs
+  groupId="js-flavor"
+  defaultValue="ts"
+  values={[
+    {label: 'TypeScript', value: 'ts'},
+    {label: 'JavaScript', value: 'js'}
+  ]
+}>
+<TabItem value="ts">
+
+```ts
+import { test as base } from '@playwright/test';
+
+export const test = base.extend({
+  storageState: async ({}, use) => {
+    const cookie = await getAuthCookie();
+    await use({ cookies: [cookie] });
+  },
+});
+```
+
+</TabItem>
+<TabItem value="js">
+
+```js
+const base = require('@playwright/test');
+
+exports.test = base.test.extend({
+  storageState: async ({}, use) => {
+    const cookie = await getAuthCookie();
+    await use({ cookies: [cookie] });
+  },
+});
+```
+
+</TabItem>
+</Tabs>
+
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
 [Android]: ./api/class-android.mdx "Android"
 [AndroidDevice]: ./api/class-androiddevice.mdx "AndroidDevice"
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -442,8 +554,10 @@ module.exports = base.test.extend({
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -458,8 +572,22 @@ module.exports = base.test.extend({
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

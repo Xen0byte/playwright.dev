@@ -65,7 +65,7 @@ assertEquals("home", content);
 ```
 
 ### API reference
-- [Page.evalOnSelector(selector, expression[, arg])](./api/class-page.mdx#page-eval-on-selector)
+- [Page.evalOnSelector(selector, expression[, arg, options])](./api/class-page.mdx#page-eval-on-selector)
 - [JsHandle.evaluate(expression[, arg])](./api/class-jshandle.mdx#js-handle-evaluate)
 
 ## Inner HTML
@@ -126,10 +126,10 @@ assertEquals(3, length);
 
 ### API reference
 - [Page.evaluate(expression[, arg])](./api/class-page.mdx#page-evaluate)
-- [Page.evalOnSelector(selector, expression[, arg])](./api/class-page.mdx#page-eval-on-selector)
+- [Page.evalOnSelector(selector, expression[, arg, options])](./api/class-page.mdx#page-eval-on-selector)
 - [Page.evalOnSelectorAll(selector, expression[, arg])](./api/class-page.mdx#page-eval-on-selector-all)
 - [Frame.evaluate(expression[, arg])](./api/class-frame.mdx#frame-evaluate)
-- [Frame.evalOnSelector(selector, expression[, arg])](./api/class-frame.mdx#frame-eval-on-selector)
+- [Frame.evalOnSelector(selector, expression[, arg, options])](./api/class-frame.mdx#frame-eval-on-selector)
 - [Frame.evalOnSelectorAll(selector, expression[, arg])](./api/class-frame.mdx#frame-eval-on-selector-all)
 - [ElementHandle.evalOnSelector(selector, expression[, arg])](./api/class-elementhandle.mdx#element-handle-eval-on-selector)
 - [ElementHandle.evalOnSelectorAll(selector, expression[, arg])](./api/class-elementhandle.mdx#element-handle-eval-on-selector-all)
@@ -144,11 +144,16 @@ assertEquals(3, length);
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -162,7 +167,7 @@ assertEquals(3, length);
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

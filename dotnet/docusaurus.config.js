@@ -13,7 +13,7 @@ let plugins = [
     {
       showReadingTime: true,
       editUrl:
-        "https://github.com/microsoft/playwright.dev/edit/master/v2/blog/",
+      "https://github.com/microsoft/playwright.dev/edit/master/",
     },
   ],
   require.resolve("@docusaurus/plugin-content-pages"),
@@ -41,7 +41,7 @@ module.exports = {
     },
     prism: {
       theme: require('prism-react-renderer/themes/dracula'),
-      additionalLanguages: ['csharp'],
+      additionalLanguages: ['csharp', 'bash', 'batch', 'powershell'],
     },
     navbar: {
       title: "Playwright for .NET",
@@ -141,6 +141,14 @@ module.exports = {
               label: "GitHub",
               href: "https://github.com/microsoft/playwright-dotnet",
             },
+            {
+              label: "YouTube",
+              href: "https://www.youtube.com/channel/UC46Zj8pDH5tDosqm1gd7WTg",
+            },
+            {
+              label: "Conference videos",
+              href: "/blog/",
+            },
           ],
         },
       ],
@@ -168,5 +176,6 @@ module.exports = {
   plugins,
   customFields: {
     repositoryName: "playwright-dotnet",
+    languageName: '.NET',
   },
 };

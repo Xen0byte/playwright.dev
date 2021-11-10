@@ -17,6 +17,7 @@
 //@ts-check
 
 const Documentation = require('./documentation');
+const { generateTabGroup } = require('./format_utils');
 const { toTitleCase, renderJSSignature } = require('./generator');
 /** @typedef {import('./generator').GeneratorFormatter} GeneratorFormatter */
 
@@ -24,6 +25,9 @@ const { toTitleCase, renderJSSignature } = require('./generator');
  * @implements {GeneratorFormatter}
  */
 class JavaFormatter {
+  constructor() {
+    this.lang = 'java';
+  }
   formatMember(member) {
     let text;
     let args = [];
@@ -64,6 +68,28 @@ class JavaFormatter {
   }
 
   /**
+   * @param {Documentation.Type} type
+   * @param {string} direction
+   * @param {Documentation.Member} member
+   */
+  formatArrayType(type, direction, member) {
+    const text = type.name;
+    if ('Array' !== text || direction !== 'in')
+      return null;
+    const method = member.enclosingMethod;
+    if (!method)
+      return null;
+    if (!member.type.union)
+      return null;
+    // If there are more than Array arguments format them as arrays
+    // (List overloads don't work because of type erasure in java).
+    if (member.type.union.filter(e => e.name === 'Array').length < 2)
+      return null;
+    const elementType = this.renderType(type.templates[0], direction, member);
+    return `${elementType}&#91;&#93;`;
+  }
+
+  /**
    * @param {Documentation.Type} type 
    * @param {string} direction
    * @param {Documentation.Member} member
@@ -95,10 +121,15 @@ class JavaFormatter {
           case 'ElementHandle.selectOption.values': return '`SelectOption`';
           case 'Frame.selectOption.values': return '`SelectOption`';
           case 'Page.selectOption.values': return '`SelectOption`';
+          case 'Locator.selectOption.values': return '`SelectOption`';
           case 'ElementHandle.setInputFiles.files': return '`FilePayload`';
           case 'FileChooser.setFiles.files': return '`FilePayload`';
           case 'Frame.setInputFiles.files': return '`FilePayload`';
           case 'Page.setInputFiles.files': return '`FilePayload`';
+          case 'Locator.setInputFiles.files': return '`FilePayload`';
+          case 'Request.headersArray': return '`HttpHeader`';
+          case 'Response.headersArray': return '`HttpHeader`';
+          case 'FetchResponse.headersArray': return '`HttpHeader`';
         }
         if (!type.templates)
           return `${toTitleCase(member.alias)}`;
@@ -122,7 +153,7 @@ class JavaFormatter {
       if (n.text === 'extends: [Error]')
         n.text = 'extends: [PlaywrightException]';
     });
-    return spec;
+    return generateTabGroup(spec, this.lang, 'bash');
   }
 }
 

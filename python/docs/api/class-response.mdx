@@ -8,10 +8,14 @@ import TabItem from '@theme/TabItem';
 [Response] class represents responses which are received by page.
 
 
+- [response.all_headers()](./api/class-response.mdx#response-all-headers)
 - [response.body()](./api/class-response.mdx#response-body)
 - [response.finished()](./api/class-response.mdx#response-finished)
 - [response.frame](./api/class-response.mdx#response-frame)
+- [response.header_value(name)](./api/class-response.mdx#response-header-value)
+- [response.header_values(name)](./api/class-response.mdx#response-header-values)
 - [response.headers](./api/class-response.mdx#response-headers)
+- [response.headers_array()](./api/class-response.mdx#response-headers-array)
 - [response.json()](./api/class-response.mdx#response-json)
 - [response.ok](./api/class-response.mdx#response-ok)
 - [response.request](./api/class-response.mdx#response-request)
@@ -22,6 +26,11 @@ import TabItem from '@theme/TabItem';
 - [response.text()](./api/class-response.mdx#response-text)
 - [response.url](./api/class-response.mdx#response-url)
 
+## response.all_headers() {#response-all-headers}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-all-headers-return"/> &#60;[Dict]\[[str], [str]\]&#62;<a href="#response-all-headers-return" class="list-anchor">#</a>
+
+An object with all the response HTTP headers associated with this response.
+
 ## response.body() {#response-body}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-body-return"/> &#60;[bytes]&#62;<a href="#response-body-return" class="list-anchor">#</a>
 
@@ -30,17 +39,36 @@ Returns the buffer with response body.
 ## response.finished() {#response-finished}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-finished-return"/> &#60;[NoneType]|[str]&#62;<a href="#response-finished-return" class="list-anchor">#</a>
 
-Waits for this response to finish, returns failure error if request failed.
+Waits for this response to finish, returns always `null`.
 
 ## response.frame {#response-frame}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-frame-return"/> &#60;[Frame]&#62;<a href="#response-frame-return" class="list-anchor">#</a>
 
 Returns the [Frame] that initiated this response.
 
+## response.header_value(name) {#response-header-value}
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-value-option-name"/> &#60;[str]&#62; Name of the header.<a href="#response-header-value-option-name" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-value-return"/> &#60;[NoneType]|[str]&#62;<a href="#response-header-value-return" class="list-anchor">#</a>
+
+Returns the value of the header matching the name. The name is case insensitive. If multiple headers have the same name (except `set-cookie`), they are returned as a list separated by `, `. For `set-cookie`, the `\n` separator is used. If no headers are found, `null` is returned.
+
+## response.header_values(name) {#response-header-values}
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-values-option-name"/> &#60;[str]&#62; Name of the header.<a href="#response-header-values-option-name" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-values-return"/> &#60;[List]\[[str]\]&#62;<a href="#response-header-values-return" class="list-anchor">#</a>
+
+Returns all values of the headers matching the name, for example `set-cookie`. The name is case insensitive.
+
 ## response.headers {#response-headers}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-headers-return"/> &#60;[Dict]\[[str], [str]\]&#62;<a href="#response-headers-return" class="list-anchor">#</a>
 
-Returns the object with HTTP headers associated with the response. All header names are lower-case.
+**DEPRECATED** Incomplete list of headers as seen by the rendering engine. Use [response.all_headers()](./api/class-response.mdx#response-all-headers) instead.
+
+## response.headers_array() {#response-headers-array}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-headers-array-return"/> &#60;[List]\[[Dict]\]&#62;<a href="#response-headers-array-return" class="list-anchor">#</a>
+  - `name` &#60;[str]&#62; Name of the header.
+  - `value` &#60;[str]&#62; Value of the header.
+
+An array with all the request HTTP headers associated with this response. Unlike [response.all_headers()](./api/class-response.mdx#response-all-headers), header names are NOT lower-cased. Headers with multiple entries, such as `Set-Cookie`, appear in the array multiple times.
 
 ## response.json() {#response-json}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-json-return"/> &#60;[Serializable]&#62;<a href="#response-json-return" class="list-anchor">#</a>
@@ -64,8 +92,8 @@ Returns the matching [Request] object.
   - `issuer` &#60;[str]&#62; Common Name component of the Issuer field. from the certificate. This should only be used for informational purposes. Optional.
   - `protocol` &#60;[str]&#62; The specific TLS protocol used. (e.g. `TLS 1.3`). Optional.
   - `subjectName` &#60;[str]&#62; Common Name component of the Subject field from the certificate. This should only be used for informational purposes. Optional.
-  - `validFrom` &#60;[int]&#62; Unix timestamp (in seconds) specifying when this cert becomes valid. Optional.
-  - `validTo` &#60;[int]&#62; Unix timestamp (in seconds) specifying when this cert becomes invalid. Optional.
+  - `validFrom` &#60;[float]&#62; Unix timestamp (in seconds) specifying when this cert becomes valid. Optional.
+  - `validTo` &#60;[float]&#62; Unix timestamp (in seconds) specifying when this cert becomes invalid. Optional.
 
 Returns SSL and other security information.
 
@@ -97,6 +125,9 @@ Returns the text representation of response body.
 Contains the URL of the response.
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -108,8 +139,10 @@ Contains the URL of the response.
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -124,7 +157,7 @@ Contains the URL of the response.
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

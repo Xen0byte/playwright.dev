@@ -19,9 +19,12 @@ HTTP Error responses, such as 404 or 503, are still successful responses from HT
 If request gets a 'redirect' response, the request is successfully finished with the 'requestfinished' event, and a new request is  issued to a redirected url.
 
 
+- [Request.allHeaders()](./api/class-request.mdx#request-all-headers)
 - [Request.failure()](./api/class-request.mdx#request-failure)
 - [Request.frame()](./api/class-request.mdx#request-frame)
 - [Request.headers()](./api/class-request.mdx#request-headers)
+- [Request.headersArray()](./api/class-request.mdx#request-headers-array)
+- [Request.headerValue(name)](./api/class-request.mdx#request-header-value)
 - [Request.isNavigationRequest()](./api/class-request.mdx#request-is-navigation-request)
 - [Request.method()](./api/class-request.mdx#request-method)
 - [Request.postData()](./api/class-request.mdx#request-post-data)
@@ -30,8 +33,14 @@ If request gets a 'redirect' response, the request is successfully finished with
 - [Request.redirectedTo()](./api/class-request.mdx#request-redirected-to)
 - [Request.resourceType()](./api/class-request.mdx#request-resource-type)
 - [Request.response()](./api/class-request.mdx#request-response)
+- [Request.sizes()](./api/class-request.mdx#request-sizes)
 - [Request.timing()](./api/class-request.mdx#request-timing)
 - [Request.url()](./api/class-request.mdx#request-url)
+
+## Request.allHeaders() {#request-all-headers}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-all-headers-return"/> &#60;[Map]<[String], [String]>&#62;<a href="#request-all-headers-return" class="list-anchor">#</a>
+
+An object with all the request HTTP headers associated with this request. The header names are lower-cased.
 
 ## Request.failure() {#request-failure}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-failure-return"/> &#60;[null]|[String]&#62;<a href="#request-failure-return" class="list-anchor">#</a>
@@ -51,10 +60,23 @@ page.onRequestFailed(request -> {
 
 Returns the [Frame] that initiated this request.
 
+## Request.headerValue(name) {#request-header-value}
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-header-value-option-name"/> &#60;[String]&#62; Name of the header.<a href="#request-header-value-option-name" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-header-value-return"/> &#60;[null]|[String]&#62;<a href="#request-header-value-return" class="list-anchor">#</a>
+
+Returns the value of the header matching the name. The name is case insensitive.
+
 ## Request.headers() {#request-headers}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-headers-return"/> &#60;[Map]<[String], [String]>&#62;<a href="#request-headers-return" class="list-anchor">#</a>
 
-An object with HTTP headers associated with the request. All header names are lower-case.
+**DEPRECATED** Incomplete list of headers as seen by the rendering engine. Use [Request.allHeaders()](./api/class-request.mdx#request-all-headers) instead.
+
+## Request.headersArray() {#request-headers-array}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-headers-array-return"/> &#60;[List]<`HttpHeader`>&#62;<a href="#request-headers-array-return" class="list-anchor">#</a>
+  - `name` &#60;[String]&#62; Name of the header.
+  - `value` &#60;[String]&#62; Value of the header.
+
+An array with all the request HTTP headers associated with this request. Unlike [Request.allHeaders()](./api/class-request.mdx#request-all-headers), header names are NOT lower-cased. Headers with multiple entries, such as `Set-Cookie`, appear in the array multiple times.
 
 ## Request.isNavigationRequest() {#request-is-navigation-request}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-is-navigation-request-return"/> &#60;[boolean]&#62;<a href="#request-is-navigation-request-return" class="list-anchor">#</a>
@@ -118,6 +140,15 @@ Contains the request's resource type as it was perceived by the rendering engine
 
 Returns the matching [Response] object, or `null` if the response was not received due to error.
 
+## Request.sizes() {#request-sizes}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-sizes-return"/> &#60;Sizes&#62;<a href="#request-sizes-return" class="list-anchor">#</a>
+  - `requestBodySize` &#60;[int]&#62; Size of the request body (POST data payload) in bytes. Set to 0 if there was no body.
+  - `requestHeadersSize` &#60;[int]&#62; Total number of bytes from the start of the HTTP request message until (and including) the double CRLF before the body.
+  - `responseBodySize` &#60;[int]&#62; Size of the received response body (encoded) in bytes.
+  - `responseHeadersSize` &#60;[int]&#62; Total number of bytes from the start of the HTTP response message until (and including) the double CRLF before the body.
+
+Returns resource size information for given request.
+
 ## Request.timing() {#request-timing}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="request-timing-return"/> &#60;Timing&#62;<a href="#request-timing-return" class="list-anchor">#</a>
   - `startTime` &#60;[double]&#62; Request start time in milliseconds elapsed since January 1, 1970 00:00:00 UTC
@@ -154,11 +185,16 @@ URL of the request.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -172,7 +208,7 @@ URL of the request.
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

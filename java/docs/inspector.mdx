@@ -20,20 +20,41 @@ Playwright Inspector is a GUI tool that helps authoring and debugging Playwright
 There are several ways of opening Playwright Inspector:
 - Set the `PWDEBUG` environment variable to run your scripts in debug mode. This configures Playwright for debugging and opens the inspector.
 
+  <Tabs
+    groupId="bash-flavor"
+    defaultValue="bash"
+    values={[
+      {label: 'Bash', value: 'bash'},
+      {label: 'PowerShell', value: 'powershell'},
+      {label: 'Batch', value: 'batch'}
+    ]
+  }>
+  <TabItem value="bash">
+  
   ```bash
-  # Linux/macOS
   PWDEBUG=1 PLAYWRIGHT_JAVA_SRC=<java src root> mvn test
+  ```
   
-  # Windows with cmd.exe
-  set PLAYWRIGHT_JAVA_SRC=<java src root>
-  set PWDEBUG=1
-  mvn test
+  </TabItem>
+  <TabItem value="powershell">
   
-  # Windows with PowerShell
+  ```powershell
   $env:PLAYWRIGHT_JAVA_SRC="<java src root>"
   $env:PWDEBUG=1
   mvn test
   ```
+  
+  </TabItem>
+  <TabItem value="batch">
+  
+  ```batch
+  set PLAYWRIGHT_JAVA_SRC=<java src root>
+  set PWDEBUG=1
+  mvn test
+  ```
+  
+  </TabItem>
+  </Tabs>
 
   Additional useful defaults are configured when `PWDEBUG=1` is set:
   - Browsers launch in the headed mode
@@ -90,9 +111,29 @@ You can use browser developer tools in Chromium, Firefox and WebKit while runnin
 
 <img width="602" alt="Selectors toolbar" src="https://user-images.githubusercontent.com/883973/108614696-ad5eaa00-73b1-11eb-81f5-9eebe62543a2.png"></img>
 
+You can also use the following API inside the Developer Tools Console of any browser.
+
+<img src="https://user-images.githubusercontent.com/284612/92536317-37dd9380-f1ee-11ea-875d-daf1b206dd56.png"></img>
+
+#### playwright.$(selector)
+
+Query Playwright selector, using the actual Playwright query engine, for example:
+
+#### playwright.$$(selector)
+
+Same as `playwright.$`, but returns all matching elements.
+
+#### playwright.inspect(selector)
+
+Reveal element in the Elements panel (if DevTools of the respective browser supports it).
+
+#### playwright.selector(element)
+
+Generates selector for the given element.
+
 ## Recording scripts
 
-At any moment, clicking Record action enables recorder (codegen) mode. Every action on the target page is turned into the generated script:
+At any moment, clicking Record action enables [codegen mode](./codegen.mdx). Every action on the target page is turned into the generated script:
 
 <img width="712" alt="Recorded script" src="https://user-images.githubusercontent.com/883973/108614897-85704600-73b3-11eb-8bcd-f2e129786c49.png"></img>
 
@@ -107,11 +148,16 @@ You can copy entire generated script or clear it using toolbar actions.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -125,7 +171,7 @@ You can copy entire generated script or clear it using toolbar actions.
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

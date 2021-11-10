@@ -26,13 +26,13 @@ Useful links:
 <TabItem value="sync">
 
 ```py
-client = page.context().new_cdp_session(page)
-client.send("animation.enable")
-client.on("animation.animation_created", lambda: print("animation created!"))
-response = client.send("animation.get_playback_rate")
-print("playback rate is " + response["playback_rate"])
-client.send("animation.set_playback_rate", {
-    playback_rate: response["playback_rate"] / 2
+client = page.context.new_cdp_session(page)
+client.send("Animation.enable")
+client.on("Animation.animationCreated", lambda: print("animation created!"))
+response = client.send("Animation.getPlaybackRate")
+print("playback rate is " + str(response["playbackRate"]))
+client.send("Animation.setPlaybackRate", {
+    playbackRate: response["playbackRate"] / 2
 })
 ```
 
@@ -40,13 +40,13 @@ client.send("animation.set_playback_rate", {
 <TabItem value="async">
 
 ```py
-client = await page.context().new_cdp_session(page)
-await client.send("animation.enable")
-client.on("animation.animation_created", lambda: print("animation created!"))
-response = await client.send("animation.get_playback_rate")
-print("playback rate is " + response["playback_rate"])
-await client.send("animation.set_playback_rate", {
-    playback_rate: response["playback_rate"] / 2
+client = await page.context.new_cdp_session(page)
+await client.send("Animation.enable")
+client.on("Animation.animationCreated", lambda: print("animation created!"))
+response = await client.send("Animation.getPlaybackRate")
+print("playback rate is " + str(response["playbackRate"]))
+await client.send("Animation.setPlaybackRate", {
+    playbackRate: response["playbackRate"] / 2
 })
 ```
 
@@ -63,11 +63,14 @@ await client.send("animation.set_playback_rate", {
 Detaches the CDPSession from the target. Once detached, the CDPSession object won't emit any events and can't be used to send messages.
 
 ## cdp_session.send(method, **kwargs) {#cdp-session-send}
-- `method`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="cdp-session-send-param-method"/> &#60;[str]&#62; protocol method name<a href="#cdp-session-send-param-method" class="list-anchor">#</a>
-- `params`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="cdp-session-send-param-params"/> &#60;[Dict]&#62; Optional method parameters<a href="#cdp-session-send-param-params" class="list-anchor">#</a>
+- `method`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="cdp-session-send-option-method"/> &#60;[str]&#62; protocol method name<a href="#cdp-session-send-option-method" class="list-anchor">#</a>
+- `params`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="cdp-session-send-option-params"/> &#60;[Dict]&#62; Optional method parameters<a href="#cdp-session-send-option-params" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="cdp-session-send-return"/> &#60;[Dict]&#62;<a href="#cdp-session-send-return" class="list-anchor">#</a>
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -79,8 +82,10 @@ Detaches the CDPSession from the target. Once detached, the CDPSession object wo
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -95,7 +100,7 @@ Detaches the CDPSession from the target. Once detached, the CDPSession object wo
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

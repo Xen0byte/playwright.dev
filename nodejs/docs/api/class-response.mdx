@@ -8,10 +8,14 @@ import TabItem from '@theme/TabItem';
 [Response] class represents responses which are received by page.
 
 
+- [response.allHeaders()](./api/class-response.mdx#response-all-headers)
 - [response.body()](./api/class-response.mdx#response-body)
 - [response.finished()](./api/class-response.mdx#response-finished)
 - [response.frame()](./api/class-response.mdx#response-frame)
 - [response.headers()](./api/class-response.mdx#response-headers)
+- [response.headersArray()](./api/class-response.mdx#response-headers-array)
+- [response.headerValue(name)](./api/class-response.mdx#response-header-value)
+- [response.headerValues(name)](./api/class-response.mdx#response-header-values)
 - [response.json()](./api/class-response.mdx#response-json)
 - [response.ok()](./api/class-response.mdx#response-ok)
 - [response.request()](./api/class-response.mdx#response-request)
@@ -22,6 +26,11 @@ import TabItem from '@theme/TabItem';
 - [response.text()](./api/class-response.mdx#response-text)
 - [response.url()](./api/class-response.mdx#response-url)
 
+## response.allHeaders() {#response-all-headers}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-all-headers-return"/> &#60;[Promise]<[Object]<[string], [string]>>&#62;<a href="#response-all-headers-return" class="list-anchor">#</a>
+
+An object with all the response HTTP headers associated with this response.
+
 ## response.body() {#response-body}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-body-return"/> &#60;[Promise]<[Buffer]>&#62;<a href="#response-body-return" class="list-anchor">#</a>
 
@@ -30,17 +39,36 @@ Returns the buffer with response body.
 ## response.finished() {#response-finished}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-finished-return"/> &#60;[Promise]<[null]|[Error]>&#62;<a href="#response-finished-return" class="list-anchor">#</a>
 
-Waits for this response to finish, returns failure error if request failed.
+Waits for this response to finish, returns always `null`.
 
 ## response.frame() {#response-frame}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-frame-return"/> &#60;[Frame]&#62;<a href="#response-frame-return" class="list-anchor">#</a>
 
 Returns the [Frame] that initiated this response.
 
+## response.headerValue(name) {#response-header-value}
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-value-option-name"/> &#60;[string]&#62; Name of the header.<a href="#response-header-value-option-name" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-value-return"/> &#60;[Promise]<[null]|[string]>&#62;<a href="#response-header-value-return" class="list-anchor">#</a>
+
+Returns the value of the header matching the name. The name is case insensitive. If multiple headers have the same name (except `set-cookie`), they are returned as a list separated by `, `. For `set-cookie`, the `\n` separator is used. If no headers are found, `null` is returned.
+
+## response.headerValues(name) {#response-header-values}
+- `name`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-values-option-name"/> &#60;[string]&#62; Name of the header.<a href="#response-header-values-option-name" class="list-anchor">#</a>
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-header-values-return"/> &#60;[Promise]<[Array]<[string]>>&#62;<a href="#response-header-values-return" class="list-anchor">#</a>
+
+Returns all values of the headers matching the name, for example `set-cookie`. The name is case insensitive.
+
 ## response.headers() {#response-headers}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-headers-return"/> &#60;[Object]<[string], [string]>&#62;<a href="#response-headers-return" class="list-anchor">#</a>
 
-Returns the object with HTTP headers associated with the response. All header names are lower-case.
+**DEPRECATED** Incomplete list of headers as seen by the rendering engine. Use [response.allHeaders()](./api/class-response.mdx#response-all-headers) instead.
+
+## response.headersArray() {#response-headers-array}
+- returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-headers-array-return"/> &#60;[Promise]<[Array]<[Object]>>&#62;<a href="#response-headers-array-return" class="list-anchor">#</a>
+  - `name` &#60;[string]&#62; Name of the header.
+  - `value` &#60;[string]&#62; Value of the header.
+
+An array with all the request HTTP headers associated with this response. Unlike [response.allHeaders()](./api/class-response.mdx#response-all-headers), header names are NOT lower-cased. Headers with multiple entries, such as `Set-Cookie`, appear in the array multiple times.
 
 ## response.json() {#response-json}
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="response-json-return"/> &#60;[Promise]<[Serializable]>&#62;<a href="#response-json-return" class="list-anchor">#</a>
@@ -102,6 +130,9 @@ Contains the URL of the response.
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -116,8 +147,10 @@ Contains the URL of the response.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -132,8 +165,22 @@ Contains the URL of the response.
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

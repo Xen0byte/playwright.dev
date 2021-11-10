@@ -17,6 +17,7 @@
 //@ts-check
 
 const Documentation = require('./documentation');
+const { generateTabGroup } = require('./format_utils');
 const { toTitleCase } = require('./generator');
 /** @typedef {import('./generator').GeneratorFormatter} GeneratorFormatter */
 
@@ -24,6 +25,9 @@ const { toTitleCase } = require('./generator');
  * @implements {GeneratorFormatter}
  */
 class CSharpFormatter {
+  constructor() {
+    this.lang = 'csharp';
+  }
   /**
    * @param {Documentation.Member} member 
    */
@@ -113,20 +117,26 @@ class CSharpFormatter {
           case 'ElementHandle.selectOption.values': return '`SelectOption`';
           case 'Frame.selectOption.values': return '`SelectOption`';
           case 'Page.selectOption.values': return '`SelectOption`';
+          case 'Locator.selectOption.values': return '`SelectOption`';
           case 'ElementHandle.setInputFiles.files': return '`FilePayload`';
           case 'FileChooser.setFiles.files': return '`FilePayload`';
           case 'Frame.setInputFiles.files': return '`FilePayload`';
           case 'Page.setInputFiles.files': return '`FilePayload`';
+          case 'Locator.setInputFiles.files': return '`FilePayload`';
+          case 'Request.headersArray': return '`HttpHeader`';
+          case 'Response.headersArray': return '`HttpHeader`';
+          case 'FetchResponse.headersArray': return '`HttpHeader`';
         }
         if (!type.templates)
           return `${toTitleCase(member.alias)}${optionalSuffix}`;
-        return `[Map]${optionalSuffix}`;
+        return `[IDictionary]${optionalSuffix}`;
       }
       case 'path': return `[string]${optionalSuffix}`;
       case 'RegExp': return `[Regex]${optionalSuffix}`;
       case 'string': return `[string]${optionalSuffix}`;
+      case 'boolean': return `[bool]${optionalSuffix}`;
       // Escape '[' and ']' so that they don't break markdown links like [byte[]](link)
-      case 'Buffer': return `[byte&#91;&#93;]${optionalSuffix}`;
+      case 'Buffer': return `[byte]&#91;&#93;${optionalSuffix}`;
       case 'Readable': return `[Stream]${optionalSuffix}`;
       case 'Serializable': return `[object]${optionalSuffix}`;
       case 'URL': return `[string]${optionalSuffix}`;
@@ -135,7 +145,7 @@ class CSharpFormatter {
   }
 
   preprocessComment(spec) {
-    return spec;
+    return generateTabGroup(spec, this.lang, 'bash');
   }
 }
 

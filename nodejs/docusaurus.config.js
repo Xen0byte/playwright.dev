@@ -13,7 +13,7 @@ let plugins = [
     {
       showReadingTime: true,
       editUrl:
-        "https://github.com/microsoft/playwright.dev/edit/master/v2/blog/",
+        "https://github.com/microsoft/playwright.dev/edit/master/",
     },
   ],
   require.resolve("@docusaurus/plugin-content-pages"),
@@ -38,6 +38,10 @@ module.exports = {
   themeConfig: {
     colorMode: {
       defaultMode: "dark",
+    },
+    prism: {
+      theme: require('prism-react-renderer/themes/dracula'),
+      additionalLanguages: ['bash', 'batch', 'powershell'],
     },
     navbar: {
       title: "Playwright",
@@ -137,6 +141,14 @@ module.exports = {
               label: "GitHub",
               href: "https://github.com/microsoft/playwright",
             },
+            {
+              label: "YouTube",
+              href: "https://www.youtube.com/channel/UC46Zj8pDH5tDosqm1gd7WTg",
+            },
+            {
+              label: "Conference videos",
+              href: "/blog/",
+            },
           ],
         },
       ],
@@ -164,5 +176,6 @@ module.exports = {
   plugins,
   customFields: {
     repositoryName: "playwright",
+    languageName: 'Node.js',
   },
 };

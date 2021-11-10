@@ -14,7 +14,7 @@ JSHandle windowHandle = page.evaluateHandle("() => window");
 
 JSHandle prevents the referenced JavaScript object being garbage collected unless the handle is exposed with [JsHandle.dispose()](./api/class-jshandle.mdx#js-handle-dispose). JSHandles are auto-disposed when their origin frame gets navigated or the parent context gets destroyed.
 
-JSHandle instances can be used as an argument in [Page.evalOnSelector(selector, expression[, arg])](./api/class-page.mdx#page-eval-on-selector), [Page.evaluate(expression[, arg])](./api/class-page.mdx#page-evaluate) and [Page.evaluateHandle(expression[, arg])](./api/class-page.mdx#page-evaluate-handle) methods.
+JSHandle instances can be used as an argument in [Page.evalOnSelector(selector, expression[, arg, options])](./api/class-page.mdx#page-eval-on-selector), [Page.evaluate(expression[, arg])](./api/class-page.mdx#page-evaluate) and [Page.evaluateHandle(expression[, arg])](./api/class-page.mdx#page-evaluate-handle) methods.
 
 
 - [JsHandle.asElement()](./api/class-jshandle.mdx#js-handle-as-element)
@@ -36,8 +36,8 @@ Returns either `null` or the object handle itself, if the object handle is an in
 The `jsHandle.dispose` method stops referencing the element handle.
 
 ## JsHandle.evaluate(expression[, arg]) {#js-handle-evaluate}
-- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-param-expression"/> &#60;[String]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#js-handle-evaluate-param-expression" class="list-anchor">#</a>
-- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-param-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `expression`.<a href="#js-handle-evaluate-param-arg" class="list-anchor">#</a>
+- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-option-expression"/> &#60;[String]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#js-handle-evaluate-option-expression" class="list-anchor">#</a>
+- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-option-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `expression`.<a href="#js-handle-evaluate-option-arg" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-return"/> &#60;[Object]&#62;<a href="#js-handle-evaluate-return" class="list-anchor">#</a>
 
 Returns the return value of `expression`.
@@ -54,8 +54,8 @@ assertEquals("10 retweets", tweetHandle.evaluate("node => node.innerText"));
 ```
 
 ## JsHandle.evaluateHandle(expression[, arg]) {#js-handle-evaluate-handle}
-- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-handle-param-expression"/> &#60;[String]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#js-handle-evaluate-handle-param-expression" class="list-anchor">#</a>
-- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-handle-param-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `expression`.<a href="#js-handle-evaluate-handle-param-arg" class="list-anchor">#</a>
+- `expression`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-handle-option-expression"/> &#60;[String]&#62; JavaScript expression to be evaluated in the browser context. If it looks like a function declaration, it is interpreted as a function. Otherwise, evaluated as an expression.<a href="#js-handle-evaluate-handle-option-expression" class="list-anchor">#</a>
+- `arg`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-handle-option-arg"/> &#60;[EvaluationArgument]&#62; Optional argument to pass to `expression`.<a href="#js-handle-evaluate-handle-option-arg" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-evaluate-handle-return"/> &#60;[JSHandle]&#62;<a href="#js-handle-evaluate-handle-return" class="list-anchor">#</a>
 
 Returns the return value of `expression` as a [JSHandle].
@@ -82,7 +82,7 @@ handle.dispose();
 ```
 
 ## JsHandle.getProperty(propertyName) {#js-handle-get-property}
-- `propertyName`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-get-property-param-property-name"/> &#60;[String]&#62; property to get<a href="#js-handle-get-property-param-property-name" class="list-anchor">#</a>
+- `propertyName`<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-get-property-option-property-name"/> &#60;[String]&#62; property to get<a href="#js-handle-get-property-option-property-name" class="list-anchor">#</a>
 - returns:<a aria-hidden="true" tabindex="-1" class="list-anchor-link" id="js-handle-get-property-return"/> &#60;[JSHandle]&#62;<a href="#js-handle-get-property-return" class="list-anchor">#</a>
 
 Fetches a single property from the referenced object.
@@ -106,11 +106,16 @@ The method will return an empty JSON object if the referenced object is not stri
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -124,7 +129,7 @@ The method will return an empty JSON object if the referenced object is not stri
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

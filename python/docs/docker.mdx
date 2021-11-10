@@ -16,7 +16,7 @@ This image is published on [Docker Hub].
 
 ### Pull the image
 
-or pinned to a specific Playwright version (recommended). Replace 1.10.0 with your Playwright version:
+or pinned to a specific Playwright version (recommended). Replace 1.15.0 with your Playwright version:
 
 ### Run the image
 
@@ -61,15 +61,12 @@ See our [Continuous Integration guides](./ci.mdx) for sample configs.
 
 See [all available image tags].
 
-Docker images are published automatically by GitHub Actions. We currently publish images with the following tags (`v1.10.0` in this case is an example:):
-- `:next` - tip-of-tree image version based on Ubuntu 20.04 LTS.
-- `:next-focal` - tip-of-tree image version based on Ubuntu 20.04 LTS.
-- `:next-bionic` - tip-of-tree image version based on Ubuntu 18.04 LTS.
-- `:bionic` - last Playwright release docker image based on Ubuntu 18.04 LTS.
+Docker images are published automatically by GitHub Actions. We currently publish images with the following tags (`v1.15.0` in this case is an example:):
+- `:next` - tip-of-tree image version based on Ubuntu 20.04 LTS (Focal Fossa).
+- `:next-focal` - tip-of-tree image version based on Ubuntu 20.04 LTS (Focal Fossa).
 - `:focal` - last Playwright release docker image based on Ubuntu 20.04 LTS (Focal Fossa).
-- `:v1.10.0` - Playwright v1.10.0 release docker image based on Ubuntu 20.04 LTS (Focal Fossa).
-- `:v1.10.0-focal` - Playwright v1.10.0 release docker image based on Ubuntu 20.04 LTS (Focal Fossa).
-- `:v1.10.0-bionic` - Playwright v1.10.0 release docker image based on Ubuntu 18.04 LTS (Bionic Beaver).
+- `:v1.15.0` - Playwright v1.15.0 release docker image based on Ubuntu 20.04 LTS (Focal Fossa).
+- `:v1.15.0-focal` - Playwright v1.15.0 release docker image based on Ubuntu 20.04 LTS (Focal Fossa).
 - `:sha-XXXXXXX` - docker image for every commit that changed docker files or browsers, marked with a [short sha](https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection#Short-SHA-1) (first 7 digits of the SHA commit).
 
 Status of push to MCR can be [verified here](https://mcrflow-status-ui.azurewebsites.net/) (internal link).
@@ -78,13 +75,16 @@ Status of push to MCR can be [verified here](https://mcrflow-status-ui.azurewebs
 
 We currently publish images based on the following [Ubuntu](https://hub.docker.com/_/ubuntu) versions:
 - **Ubuntu 20.04 LTS** (Focal Fossa), image tags include `focal`
-- **Ubuntu 18.04 LTS** (Bionic Beaver), image tags include `bionic`
+- **Ubuntu 18.04 LTS** (Bionic Beaver), image tags include `bionic` (not published for Java)
 
 #### Alpine
 
 Browser builds for Firefox and WebKit are built for the [glibc](https://en.wikipedia.org/wiki/GNU_C_Library) library. Alpine Linux and other distributions that are based on the [musl](https://en.wikipedia.org/wiki/Musl) standard library are not supported.
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -96,8 +96,10 @@ Browser builds for Firefox and WebKit are built for the [glibc](https://en.wikip
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -112,7 +114,7 @@ Browser builds for Firefox and WebKit are built for the [glibc](https://en.wikip
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

@@ -108,18 +108,39 @@ Using `PWDEBUG=console` will configure the browser for debugging in Developer to
 * **Disables timeout**: Sets default timeout to 0 (= no timeout)
 * **Console helper**: Configures a `playwright` object in the browser to generate and highlight [Playwright selectors](./selectors.mdx). This can be used to verify text or composite selectors.
 
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
 ```bash
-# Linux/macOS
 PWDEBUG=console pytest -s
+```
 
-# Windows with cmd.exe
-set PWDEBUG=console
-pytest -s
+</TabItem>
+<TabItem value="powershell">
 
-# Windows with PowerShell
+```powershell
 $env:PWDEBUG="console"
 pytest -s
 ```
+
+</TabItem>
+<TabItem value="batch">
+
+```batch
+set PWDEBUG=console
+pytest -s
+```
+
+</TabItem>
+</Tabs>
 
 ## Selectors in Developer Tools Console
 
@@ -154,21 +175,44 @@ Setup [`launch.json` configuration](https://code.visualstudio.com/docs/nodejs/no
 
 Playwright supports verbose logging with the `DEBUG` environment variable.
 
+<Tabs
+  groupId="bash-flavor"
+  defaultValue="bash"
+  values={[
+    {label: 'Bash', value: 'bash'},
+    {label: 'PowerShell', value: 'powershell'},
+    {label: 'Batch', value: 'batch'}
+  ]
+}>
+<TabItem value="bash">
+
 ```bash
-# Linux/macOS
 DEBUG=pw:api pytest -s
+```
 
-# Windows with cmd.exe
-set DEBUG=pw:api
-pytest -s
+</TabItem>
+<TabItem value="powershell">
 
-# Windows with PowerShell
+```powershell
 $env:DEBUG="pw:api"
 pytest -s
 ```
 
+</TabItem>
+<TabItem value="batch">
+
+```batch
+set DEBUG=pw:api
+pytest -s
+```
+
+</TabItem>
+</Tabs>
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -180,8 +224,10 @@ pytest -s
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -196,7 +242,7 @@ pytest -s
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

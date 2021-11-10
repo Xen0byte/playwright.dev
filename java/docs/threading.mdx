@@ -59,6 +59,24 @@ public class PlaywrightThread extends Thread {
 }
 ```
 
+## Synchronous API and event dispatching
+
+In the synchronous Playwright API all events are dispatched only when Playwright is running its message loop. This happens automatically when you call any of the API methods and doesn't happen if there are no active Playwright calls on the stack. If you need to wait for an event the best way to do this is via one of the `waitFor*` methods.
+
+### Page.waitForTimeout() vs. Thread.sleep()
+
+One consequence of the synchronous API is that if you for whatever reason call `Thread.sleep()` no events will be fired while the thread is sleeping. If you want events from the browser to be dispatched while the program
+
+execution is paused use [Page.waitForTimeout(timeout)](./api/class-page.mdx#page-wait-for-timeout) or [Frame.waitForTimeout(timeout)](./api/class-frame.mdx#frame-wait-for-timeout):
+
+```java
+page.onResponse(response -> System.out.println(response.url()));
+page.navigate("https://playwright.dev");
+System.out.println("-- did navigate --");
+// Block current thread for 60s and ensure the events are dispatched.
+page.waitForTimeout(60_000);
+```
+
 
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
@@ -69,11 +87,16 @@ public class PlaywrightThread extends Thread {
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -87,7 +110,7 @@ public class PlaywrightThread extends Thread {
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

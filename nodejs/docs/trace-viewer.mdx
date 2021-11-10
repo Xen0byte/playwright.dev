@@ -14,12 +14,55 @@ Playwright Trace Viewer is a GUI tool that helps exploring recorded Playwright t
 - [Actions](#actions)
 - [Screenshots](#screenshots)
 - [Snapshots](#snapshots)
+- [Viewing remote Traces](#viewing-remote-traces)
 
 ## Recording a trace
 
-Traces can be recorded using the [browserContext.tracing](./api/class-browsercontext.mdx#browser-context-tracing) API as follows:
+Set the `trace: 'on-first-retry'` option in the test configuration file. This will produce `trace.zip` file for each test that was retried.
+
+<Tabs
+  groupId="js-flavor"
+  defaultValue="ts"
+  values={[
+    {label: 'TypeScript', value: 'ts'},
+    {label: 'JavaScript', value: 'js'},
+    {label: 'Library', value: 'library'}
+  ]
+}>
+<TabItem value="ts">
+
+```ts
+import { PlaywrightTestConfig } from '@playwright/test';
+const config: PlaywrightTestConfig = {
+  retries: 1,
+  use: {
+    trace: 'on-first-retry',
+  },
+};
+export default config;
+```
+
+</TabItem>
+<TabItem value="js">
 
 ```js
+// @ts-check
+
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
+const config = {
+  retries: 1,
+  use: {
+    trace: 'on-first-retry',
+  },
+};
+
+module.exports = config;
+```
+
+</TabItem>
+<TabItem value="library">
+
+```library
 const browser = await chromium.launch();
 const context = await browser.newContext();
 
@@ -33,7 +76,18 @@ await page.goto('https://playwright.dev');
 await context.tracing.stop({ path: 'trace.zip' });
 ```
 
-This will record the trace and place it into the file named `trace.zip`.
+</TabItem>
+</Tabs>
+
+You can also use `trace: 'retain-on-failure'` if you do not enable retries but still want traces for failed tests.
+
+Available options to record a trace:
+- `'off'` - Do not record a trace.
+- `'on'` - Record a trace for each test.
+- `'retain-on-failure'` - Record a trace for each test, but remove it from successful test runs.
+- `'on-first-retry'` - Record a trace only when retrying a test for the first time.
+
+If you are not using Playwright Test, use the [browserContext.tracing](./api/class-browsercontext.mdx#browser-context-tracing) API instead.
 
 ## Viewing the trace
 
@@ -89,12 +143,24 @@ Here is what the typical Action snapshot looks like:
 
 Notice how it highlights both, the DOM Node as well as the exact click position.
 
+## Viewing remote Traces
+
+You can open remote traces using it's URL. They could be generated in a CI run and makes it easy to view the remote trace without having to manually download the file.
+
+```bash
+npx playwright show-trace https://example.com/trace.zip
+```
+
+
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
 [Android]: ./api/class-android.mdx "Android"
 [AndroidDevice]: ./api/class-androiddevice.mdx "AndroidDevice"
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -109,8 +175,10 @@ Notice how it highlights both, the DOM Node as well as the exact click position.
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -125,8 +193,22 @@ Notice how it highlights both, the DOM Node as well as the exact click position.
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

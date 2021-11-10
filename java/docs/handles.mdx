@@ -77,7 +77,7 @@ myArrayHandle.dispose();
 
 ## Handle Lifecycle
 
-Handles can be acquired using the page methods such as [Page.evaluateHandle(expression[, arg])](./api/class-page.mdx#page-evaluate-handle), [Page.querySelector(selector)](./api/class-page.mdx#page-query-selector) or [Page.querySelectorAll(selector)](./api/class-page.mdx#page-query-selector-all) or their frame counterparts [Frame.evaluateHandle(expression[, arg])](./api/class-frame.mdx#frame-evaluate-handle), [Frame.querySelector(selector)](./api/class-frame.mdx#frame-query-selector) or [Frame.querySelectorAll(selector)](./api/class-frame.mdx#frame-query-selector-all). Once created, handles will retain object from [garbage collection](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management) unless page navigates or the handle is manually disposed via the [JsHandle.dispose()](./api/class-jshandle.mdx#js-handle-dispose) method.
+Handles can be acquired using the page methods such as [Page.evaluateHandle(expression[, arg])](./api/class-page.mdx#page-evaluate-handle), [Page.querySelector(selector[, options])](./api/class-page.mdx#page-query-selector) or [Page.querySelectorAll(selector)](./api/class-page.mdx#page-query-selector-all) or their frame counterparts [Frame.evaluateHandle(expression[, arg])](./api/class-frame.mdx#frame-evaluate-handle), [Frame.querySelector(selector[, options])](./api/class-frame.mdx#frame-query-selector) or [Frame.querySelectorAll(selector)](./api/class-frame.mdx#frame-query-selector-all). Once created, handles will retain object from [garbage collection](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management) unless page navigates or the handle is manually disposed via the [JsHandle.dispose()](./api/class-jshandle.mdx#js-handle-dispose) method.
 
 ### API reference
 - [JSHandle]
@@ -89,7 +89,7 @@ Handles can be acquired using the page methods such as [Page.evaluateHandle(expr
 - [ElementHandle.textContent()](./api/class-elementhandle.mdx#element-handle-text-content)
 - [JsHandle.evaluate(expression[, arg])](./api/class-jshandle.mdx#js-handle-evaluate)
 - [Page.evaluateHandle(expression[, arg])](./api/class-page.mdx#page-evaluate-handle)
-- [Page.querySelector(selector)](./api/class-page.mdx#page-query-selector)
+- [Page.querySelector(selector[, options])](./api/class-page.mdx#page-query-selector)
 - [Page.querySelectorAll(selector)](./api/class-page.mdx#page-query-selector-all)
 
 [Browser]: ./api/class-browser.mdx "Browser"
@@ -101,11 +101,16 @@ Handles can be acquired using the page methods such as [Page.evaluateHandle(expr
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -119,7 +124,7 @@ Handles can be acquired using the page methods such as [Page.evaluateHandle(expr
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

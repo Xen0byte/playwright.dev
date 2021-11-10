@@ -62,6 +62,14 @@ class Documentation {
   }
 
   /**
+   * @param {!Documentation} documentation
+   * @return {!Documentation}
+   */
+  mergeWith(documentation) {
+    return new Documentation([...this.classesArray, ...documentation.classesArray]);
+  }
+
+  /**
    * @param {string[]} errors
    */
   copyDocsFromSuperclasses(errors) {
@@ -159,7 +167,7 @@ Documentation.Class = class {
     this.extends = extendsName;
     this.comment =  '';
     this.index();
-    const match = name.match(/(JS|CDP|[A-Z])(.*)/);
+    const match = name.match(/(API|JS|CDP|[A-Z])(.*)/);
     this.varName = match[1].toLowerCase() + match[2];
   }
 
@@ -304,7 +312,13 @@ Documentation.Member = class {
     };
     this.async = false;
     this.alias = name;
-    /** 
+    this.overloadIndex = 0;
+    if (name.includes('#')) {
+      const match = name.match(/(.*)#(.*)/);
+      this.alias = match[1];
+      this.overloadIndex = (+match[2]) - 1;
+    }
+    /**
      * Param is true and option false
      * @type {Boolean}
      */

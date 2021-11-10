@@ -16,7 +16,7 @@ Playwright tests can be executed in CI environments. We have created sample conf
 ## Introduction
 
 3 steps to get your tests running on CI:
-1. **Ensure CI agent can run browsers**: Use [our Docker image](./docker.mdx) in Linux agents. Windows and macOS agents do not require any additional dependencies.
+1. **Ensure CI agent can run browsers**: Use [our Docker image](./docker.mdx) in Linux agents or install your dependencies using the [CLI](./cli.mdx#install-system-dependencies). Windows and macOS agents do not require any additional dependencies.
 1. **Install Playwright**:
 
    ```bash
@@ -32,13 +32,12 @@ Playwright tests can be executed in CI environments. We have created sample conf
 
 ## CI configurations
 
-### GitHub Actions
+The [Command line tools](./cli.mdx#install-system-dependencies) can be used to install all operating system dependencies on GitHub Actions.
 
-The [Playwright GitHub Action](https://github.com/microsoft/playwright-github-action) can be used to run Playwright tests on GitHub Actions.
+### GitHub Actions
 
 ```yml
 steps:
-  - uses: microsoft/playwright-github-action@v1
   - name: Set up Python
     uses: actions/setup-python@v2
     with:
@@ -50,11 +49,42 @@ steps:
       pip install -e .
   - name: Ensure browsers are installed
     run: python -m playwright install
+  - name: Install operating system dependencies
+    run: python -m playwright install-deps
   - name: Run your tests
     run: pytest
 ```
 
-We run [our tests](https://github.com/microsoft/playwright/blob/master/.github/workflows/tests.yml) on GitHub Actions, across a matrix of 3 platforms (Windows, Linux, macOS) and 3 browsers (Chromium, Firefox, WebKit).
+We run [our tests](https://github.com/microsoft/playwright/blob/master/.github/workflows/tests_secondary.yml) on GitHub Actions, across a matrix of 3 platforms (Windows, Linux, macOS) and 3 browsers (Chromium, Firefox, WebKit).
+
+### GitHub Actions on deployment
+
+This will start the tests after a [GitHub Deployment](https://developer.github.com/v3/repos/deployments/) went into the `success` state. Services like Azure Static Web Apps, Netlify, Vercel, etc. use this pattern so you can run your end-to-end tests on their deployed enviornment.
+
+```yml
+name: Playwright Tests
+on:
+  deployment_status:
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npm run test:e2e
+      env:
+        # This might depend on your test-runner/language binding
+        PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+```
 
 ### Docker
 
@@ -253,7 +283,7 @@ tests:
 
 ## Caching browsers
 
-By default, Playwright downloads browser binaries when the Playwright NPM package is installed. The NPM packages have a `postinstall` hook that downloads the browser binaries. This behavior can be [customized with environment variables](./installation.mdx).
+By default, Playwright downloads browser binaries when the Playwright NPM package is installed. The NPM packages have a `postinstall` hook that downloads the browser binaries. This behavior can be [customized with environment variables](./browsers.mdx#managing-browser-binaries).
 
 Caching browsers on CI is **strictly optional**: The `postinstall` hooks should execute and download the browser binaries on every run.
 
@@ -267,7 +297,7 @@ Most CI providers cache the [npm-cache](https://docs.npmjs.com/cli-commands/cach
 
 This behavior can be fixed with one of the following approaches:
 1. Move to caching `$HOME/.npm` or the npm-cache directory. (This is the default behavior in most CI providers.)
-1. Set `PLAYWRIGHT_BROWSERS_PATH=0` as the environment variable before running `npm install`. This will download the browser binaries in the `node_modules` directory and cache them with the package code. See [installation docs](./installation.mdx).
+1. Set `PLAYWRIGHT_BROWSERS_PATH=0` as the environment variable before running `npm install`. This will download the browser binaries in the `node_modules` directory and cache them with the package code. See [managing browser binaries](./browsers.mdx#managing-browser-binaries).
 1. Use `npm ci` (instead of `npm install`) which forces a clean install: by removing the existing `node_modules` directory. See [npm docs](https://docs.npmjs.com/cli/ci.html).
 1. Cache the browser binaries, with the steps below.
 
@@ -336,6 +366,9 @@ xvfb-run python test.py
 
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -347,8 +380,10 @@ xvfb-run python test.py
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -363,7 +398,7 @@ xvfb-run python test.py
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

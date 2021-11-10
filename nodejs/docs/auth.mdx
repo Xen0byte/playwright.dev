@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 Playwright can be used to automate scenarios that require authentication.
 
-Tests written with Playwright execute in isolated clean-slate environments called [browser contexts](./core-concepts.mdx#browser-contexts). This isolation model improves reproducibility and prevents cascading test failures. New browser contexts can load existing authentication state. This eliminates the need to login in every context and speeds up test execution.
+Tests written with Playwright execute in isolated clean-slate environments called [browser contexts](./browser-contexts.mdx). This isolation model improves reproducibility and prevents cascading test failures. New browser contexts can load existing authentication state. This eliminates the need to login in every context and speeds up test execution.
 
 > Note: This guide covers cookie/token-based authentication (logging in via the app UI). For [HTTP authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) use [browser.newContext([options])](./api/class-browser.mdx#browser-new-context).
 
@@ -62,104 +62,6 @@ Logging in via the UI and then reusing authentication state can be combined to i
 
 This approach will also **work in CI environments**, since it does not rely on any external state.
 
-### Reuse authentication in Playwright Test
-
-When using [Playwright Test](./test-intro.mdx), you can log in once in the global setup and then reuse authentication state in tests. That way all your tests are completely isolated, yet you only waste time logging in once for the entire test suite run.
-
-First, introduce the global setup that would log in once.
-
-<Tabs
-  groupId="js-flavor"
-  defaultValue="ts"
-  values={[
-    {label: 'TypeScript', value: 'ts'},
-    {label: 'JavaScript', value: 'js'}
-  ]
-}>
-<TabItem value="ts">
-
-```js
-// global-setup.ts
-import { chromium } from '@playwright/test';
-
-async function globalSetup() {
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-  await page.goto('http://localhost:5000/');
-  await page.click('text=login');
-  await page.fill('input[name="user"]', 'user');
-  await page.fill('input[name="password"]', 'password');
-  await page.click('input:has-text("login")');
-  await page.context().storageState({ path: 'state.json' });
-  await browser.close();
-}
-
-export default globalSetup;
-```
-
-</TabItem>
-<TabItem value="js">
-
-```js
-// global-setup.js
-const { chromium } = require('@playwright/test');
-
-module.exports = async () => {
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-  await page.goto('http://localhost:5000/');
-  await page.click('text=login');
-  await page.fill('input[name="user"]', 'user');
-  await page.fill('input[name="password"]', 'password');
-  await page.click('input:has-text("login")');
-  await page.context().storageState({ path: 'state.json' });
-  await browser.close();
-};
-```
-
-</TabItem>
-</Tabs>
-
-Then reuse saved authentication state in your tests.
-
-<Tabs
-  groupId="js-flavor"
-  defaultValue="ts"
-  values={[
-    {label: 'TypeScript', value: 'ts'},
-    {label: 'JavaScript', value: 'js'}
-  ]
-}>
-<TabItem value="ts">
-
-```js
-import { test } from '@playwright/test';
-
-test.use({ storageState: 'state.json' });
-
-test('test', async ({ page }) => {
-  await page.goto('http://localhost:5000/');
-  // You are logged in!
-});
-```
-
-</TabItem>
-<TabItem value="js">
-
-```js
-const { test } = require('@playwright/test');
-
-test.use({ storageState: 'state.json' });
-
-test('test', async ({ page }) => {
-  await page.goto('http://localhost:5000/');
-  // You are logged in!
-});
-```
-
-</TabItem>
-</Tabs>
-
 ### API reference
 - [browserContext.storageState([options])](./api/class-browsercontext.mdx#browser-context-storage-state)
 - [browser.newContext([options])](./api/class-browser.mdx#browser-new-context)
@@ -178,9 +80,9 @@ const sessionStorage = process.env.SESSION_STORAGE;
 await context.addInitScript(storage => {
   if (window.location.hostname === 'example.com') {
     const entries = JSON.parse(storage);
-    Object.keys(entries).forEach(key => {
-      window.sessionStorage.setItem(key, entries[key]);
-    });
+    for (const [key, value] of Object.entries(entries)) {
+      window.sessionStorage.setItem(key, value);
+    }
   }
 }, sessionStorage);
 ```
@@ -210,7 +112,9 @@ const context = await chromium.launchPersistentContext(userDataDir, { headless: 
 ```
 
 ### Lifecycle
-1. Create a user data directory on disk 2. Launch a persistent context with the user data directory and login the MFA account. 3. Reuse user data directory to run automation scenarios.
+1. Create a user data directory on disk.
+1. Launch a persistent context with the user data directory and login the MFA account.
+1. Reuse user data directory to run automation scenarios.
 
 ### API reference
 - [BrowserContext]
@@ -222,6 +126,9 @@ const context = await chromium.launchPersistentContext(userDataDir, { headless: 
 [AndroidInput]: ./api/class-androidinput.mdx "AndroidInput"
 [AndroidSocket]: ./api/class-androidsocket.mdx "AndroidSocket"
 [AndroidWebView]: ./api/class-androidwebview.mdx "AndroidWebView"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserServer]: ./api/class-browserserver.mdx "BrowserServer"
@@ -236,8 +143,10 @@ const context = await chromium.launchPersistentContext(userDataDir, { headless: 
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Logger]: ./api/class-logger.mdx "Logger"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
@@ -252,8 +161,22 @@ const context = await chromium.launchPersistentContext(userDataDir, { headless: 
 [Video]: ./api/class-video.mdx "Video"
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
+[Fixtures]: ./api/class-fixtures.mdx "Fixtures"
+[Test]: ./api/class-test.mdx "Test"
+[TestConfig]: ./api/class-testconfig.mdx "TestConfig"
+[TestError]: ./api/class-testerror.mdx "TestError"
+[TestInfo]: ./api/class-testinfo.mdx "TestInfo"
+[TestOptions]: ./api/class-testoptions.mdx "TestOptions"
+[TestProject]: ./api/class-testproject.mdx "TestProject"
+[WorkerInfo]: ./api/class-workerinfo.mdx "WorkerInfo"
+[Location]: ./api/class-location.mdx "Location"
+[Reporter]: ./api/class-reporter.mdx "Reporter"
+[Suite]: ./api/class-suite.mdx "Suite"
+[TestCase]: ./api/class-testcase.mdx "TestCase"
+[TestResult]: ./api/class-testresult.mdx "TestResult"
+[TestStep]: ./api/class-teststep.mdx "TestStep"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

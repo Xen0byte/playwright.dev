@@ -21,6 +21,7 @@ Here is the complete list of actionability checks performed for each action:
 | check | Yes | Yes | Yes | Yes | Yes | - |
 | click | Yes | Yes | Yes | Yes | Yes | - |
 | dblclick | Yes | Yes | Yes | Yes | Yes | - |
+| setChecked | Yes | Yes | Yes | Yes | Yes | - |
 | tap | Yes | Yes | Yes | Yes | Yes | - |
 | uncheck | Yes | Yes | Yes | Yes | Yes | - |
 | hover | Yes | Yes | Yes | Yes | - | - |
@@ -99,6 +100,9 @@ For example, consider a scenario where Playwright will click `Sign Up` button re
 [Attached]: #attached "Attached"
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -110,8 +114,10 @@ For example, consider a scenario where Playwright will click `Sign Up` button re
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -126,7 +132,7 @@ For example, consider a scenario where Playwright will click `Sign Up` button re
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

@@ -44,10 +44,11 @@ Browser browser = chromium.launch(new BrowserType.LaunchOptions()
   .setPassword('pwd'));
 ```
 
-When specifying proxy for each context individually, you need to give Playwright a hint that proxy will be set. This is done via passing a non-empty proxy server to the browser itself. Here is an example of a context-specific proxy:
+When specifying proxy for each context individually, **Chromium on Windows** needs a hint that proxy will be set. This is done via passing a non-empty proxy server to the browser itself. Here is an example of a context-specific proxy:
 
 ```java
 Browser browser = chromium.launch(new BrowserType.LaunchOptions()
+  // Browser proxy option is required for Chromium on Windows.
   .setProxy(new Proxy("per-context"));
 BrowserContext context = chromium.launch(new Browser.NewContextOptions()
   .setProxy(new Proxy("http://myproxy.com:3128"));
@@ -129,9 +130,9 @@ page.navigate("https://example.com");
 ```
 
 ### API reference
-- [BrowserContext.route(url, handler)](./api/class-browsercontext.mdx#browser-context-route)
+- [BrowserContext.route(url, handler[, options])](./api/class-browsercontext.mdx#browser-context-route)
 - [BrowserContext.unroute(url[, handler])](./api/class-browsercontext.mdx#browser-context-unroute)
-- [Page.route(url, handler)](./api/class-page.mdx#page-route)
+- [Page.route(url, handler[, options])](./api/class-page.mdx#page-route)
 - [Page.unroute(url[, handler])](./api/class-page.mdx#page-unroute)
 - [Route]
 
@@ -168,8 +169,8 @@ page.route("**/*", route -> {
 ```
 
 ### API reference
-- [Page.route(url, handler)](./api/class-page.mdx#page-route)
-- [BrowserContext.route(url, handler)](./api/class-browsercontext.mdx#browser-context-route)
+- [Page.route(url, handler[, options])](./api/class-page.mdx#page-route)
+- [BrowserContext.route(url, handler[, options])](./api/class-browsercontext.mdx#browser-context-route)
 - [Route.abort([errorCode])](./api/class-route.mdx#route-abort)
 
 <br/>
@@ -205,11 +206,16 @@ page.onWebSocket(ws -> {
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -223,7 +229,7 @@ page.onWebSocket(ws -> {
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

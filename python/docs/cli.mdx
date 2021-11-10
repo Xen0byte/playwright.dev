@@ -1,6 +1,6 @@
 ---
 id: cli
-title: "Command Line Interface"
+title: "Command line tools"
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -8,18 +8,40 @@ import TabItem from '@theme/TabItem';
 Playwright comes with the command line tools.
 
 - [Usage](#usage)
+- [Install browsers](#install-browsers)
 - [Generate code](#generate-code)
 - [Open pages](#open-pages)
 - [Inspect selectors](#inspect-selectors)
 - [Take screenshot](#take-screenshot)
 - [Generate PDF](#generate-pdf)
 - [Install system dependencies](#install-system-dependencies)
-- [Known limitations](#known-limitations)
 
 ## Usage
 
 ```bash
 playwright
+```
+
+## Install browsers
+
+Playwright can install supported browsers.
+
+```bash
+# Running without arguments will install default browsers
+playwright install
+```
+
+You can also install specific browsers by providing an argument:
+
+```bash
+# Install WebKit
+playwright install webkit
+```
+
+See all supported browsers:
+
+```bash
+playwright install --help
 ```
 
 ## Generate code
@@ -52,7 +74,7 @@ playwright codegen --load-storage=auth.json my.web.app
 
 ### Codegen with custom setup
 
-If you would like to use codegen in some non-standard setup (for example, use [browser_context.route(url, handler)](./api/class-browsercontext.mdx#browser-context-route)), it is possible to call [page.pause()](./api/class-page.mdx#page-pause) that will open a separate window with codegen controls.
+If you would like to use codegen in some non-standard setup (for example, use [browser_context.route(url, handler, **kwargs)](./api/class-browsercontext.mdx#browser-context-route)), it is possible to call [page.pause()](./api/class-page.mdx#page-pause) that will open a separate window with codegen controls.
 
 <Tabs
   groupId="python-flavor"
@@ -211,11 +233,11 @@ You can also install the dependencies for a single browser only by passing it as
 playwright install-deps chromium
 ```
 
-## Known limitations
-
-Opening WebKit Web Inspector will disconnect Playwright from the browser. In such cases, code generation will stop.
 
 [Accessibility]: ./api/class-accessibility.mdx "Accessibility"
+[APIRequest]: ./api/class-apirequest.mdx "APIRequest"
+[APIRequestContext]: ./api/class-apirequestcontext.mdx "APIRequestContext"
+[APIResponse]: ./api/class-apiresponse.mdx "APIResponse"
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
 [BrowserType]: ./api/class-browsertype.mdx "BrowserType"
@@ -227,8 +249,10 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [Error]: ./api/class-error.mdx "Error"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
@@ -243,7 +267,7 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [WebSocket]: ./api/class-websocket.mdx "WebSocket"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"

@@ -1,6 +1,6 @@
 ---
 id: cli
-title: "Command Line Interface"
+title: "Command line tools"
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -8,18 +8,40 @@ import TabItem from '@theme/TabItem';
 Playwright comes with the command line tools.
 
 - [Usage](#usage)
+- [Install browsers](#install-browsers)
 - [Generate code](#generate-code)
 - [Open pages](#open-pages)
 - [Inspect selectors](#inspect-selectors)
 - [Take screenshot](#take-screenshot)
 - [Generate PDF](#generate-pdf)
 - [Install system dependencies](#install-system-dependencies)
-- [Known limitations](#known-limitations)
 
 ## Usage
 
 ```bash
 mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI
+```
+
+## Install browsers
+
+Playwright can install supported browsers.
+
+```bash
+# Running without arguments will install default browsers
+mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+```
+
+You can also install specific browsers by providing an argument:
+
+```bash
+# Install WebKit
+mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install webkit"
+```
+
+See all supported browsers:
+
+```bash
+mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --help"
 ```
 
 ## Generate code
@@ -53,7 +75,7 @@ mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="code
 
 ### Codegen with custom setup
 
-If you would like to use codegen in some non-standard setup (for example, use [BrowserContext.route(url, handler)](./api/class-browsercontext.mdx#browser-context-route)), it is possible to call [Page.pause()](./api/class-page.mdx#page-pause) that will open a separate window with codegen controls.
+If you would like to use codegen in some non-standard setup (for example, use [BrowserContext.route(url, handler[, options])](./api/class-browsercontext.mdx#browser-context-route)), it is possible to call [Page.pause()](./api/class-page.mdx#page-pause) that will open a separate window with codegen controls.
 
 ```java
 import com.microsoft.playwright.*;
@@ -176,9 +198,6 @@ You can also install the dependencies for a single browser only by passing it as
 mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install-deps chromium"
 ```
 
-## Known limitations
-
-Opening WebKit Web Inspector will disconnect Playwright from the browser. In such cases, code generation will stop.
 
 [Browser]: ./api/class-browser.mdx "Browser"
 [BrowserContext]: ./api/class-browsercontext.mdx "BrowserContext"
@@ -189,11 +208,16 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [ElementHandle]: ./api/class-elementhandle.mdx "ElementHandle"
 [FileChooser]: ./api/class-filechooser.mdx "FileChooser"
 [Frame]: ./api/class-frame.mdx "Frame"
+[FrameLocator]: ./api/class-framelocator.mdx "FrameLocator"
 [JSHandle]: ./api/class-jshandle.mdx "JSHandle"
 [Keyboard]: ./api/class-keyboard.mdx "Keyboard"
+[Locator]: ./api/class-locator.mdx "Locator"
+[LocatorAssertions]: ./api/class-locatorassertions.mdx "LocatorAssertions"
 [Mouse]: ./api/class-mouse.mdx "Mouse"
 [Page]: ./api/class-page.mdx "Page"
+[PageAssertions]: ./api/class-pageassertions.mdx "PageAssertions"
 [Playwright]: ./api/class-playwright.mdx "Playwright"
+[PlaywrightAssertions]: ./api/class-playwrightassertions.mdx "PlaywrightAssertions"
 [PlaywrightException]: ./api/class-playwrightexception.mdx "PlaywrightException"
 [Request]: ./api/class-request.mdx "Request"
 [Response]: ./api/class-response.mdx "Response"
@@ -207,7 +231,7 @@ Opening WebKit Web Inspector will disconnect Playwright from the browser. In suc
 [WebSocketFrame]: ./api/class-websocketframe.mdx "WebSocketFrame"
 [Worker]: ./api/class-worker.mdx "Worker"
 [Element]: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
-[EvaluationArgument]: ./core-concepts.mdx#evaluation-argument "EvaluationArgument"
+[EvaluationArgument]: ./evaluating.mdx#evaluation-argument "EvaluationArgument"
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
 [iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
 [origin]: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
